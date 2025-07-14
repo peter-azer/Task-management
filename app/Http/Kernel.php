@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'userInTeam' => \App\Http\Middleware\TeamMemeberMiddlerware::class,
         'boardAccess' => \App\Http\Middleware\BoardAccsessMiddleWare::class,
         'cardExist' => \App\Http\Middleware\CardExistMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class, // Added role middleware alias
     ];
 }
