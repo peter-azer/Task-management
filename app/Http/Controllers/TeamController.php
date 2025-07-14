@@ -25,20 +25,25 @@ class TeamController extends Controller
 
     public function createTeam(Request $request)
     {
-        $request->validate([
-            "team_name" => "required|min:5|max:20",
-            "team_description" => "required|min:5|max:90",
-            "team_pattern" => 'required',
-        ]);
+        try{
 
-        $createdTeam = $this->teamLogic->createTeam(
-            Auth::user()->id,
-            $request->team_name,
-            $request->team_description,
-            $request->team_pattern,
-        );
-
-        return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
+            $request->validate([
+                "team_name" => "required|min:5|max:20",
+                "team_description" => "required|min:5|max:90",
+                "team_pattern" => 'sometimes',
+            ]);
+            
+            $createdTeam = $this->teamLogic->createTeam(
+                Auth::user()->id,
+                $request->team_name,
+                $request->team_description,
+                $request->team_pattern,
+            );
+            
+            return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors("Error creating team: " . $e->getMessage());
+        }
     }
 
     public function updateData(Request $request)
@@ -124,7 +129,8 @@ class TeamController extends Controller
 
         return view("teams")
             ->with("teams", $teams)
-            ->with("invites", $invites);
+            ->with("invites", $invites)
+            ->with("patterns", TeamLogic::PATTERN);
     }
 
     public function searchBoard(Request $request, $team_id)

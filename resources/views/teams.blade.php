@@ -106,7 +106,7 @@
         <header class="w-full">
             <form class="flex items-center gap-4" id="search-form" action="{{ route('searchTeam') }}" method="GET">
                 @csrf
-                <x-form.text icon="fas-cube" name="team_name" placeholder="Team's name"
+                <x-form.text icon="fas-cube" name="team_name" placeholder="Team's name "
                     value="{{ session('__old_team_name') }}" />
                 <div class="h-full min-w-min">
                     <x-form.button type="submit" primary class="h-full">
@@ -176,9 +176,13 @@
 
 @pushOnce('page')
     <script>
-        ModalView.onShow("createTeam", (modal) =>{
+        ModalView.onShow("createTeam", (modal) => {
             modal.querySelectorAll("form[method][action]").forEach(
-                form => form.addEventListener("submit", () => PageLoader.show())
+            form => form.addEventListener("submit", (e) => {
+                console.log("Form values:", Object.fromEntries(new FormData(form)));
+                console.log("Form errors:", form.querySelectorAll(".error"));
+                PageLoader.show();
+            })
             );
         });
 
