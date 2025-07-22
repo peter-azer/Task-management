@@ -26,7 +26,7 @@
         </a>
 
         <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
-            @if (Auth::user()->id == $owner->id)
+            @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
                 <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
                     class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
                     <x-fas-pen class="w-4 h-4" />
@@ -69,7 +69,7 @@
 @endsection
 
 @section('content')
-    @if (Auth::user()->id == $owner->id)
+    @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
         <template is-modal="changeProfile">
             <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">
                 <x-form.file name="picture" label="Choose Image" accept="image/png, image/jpeg, image/jpg" />
@@ -243,7 +243,7 @@
     <div class="flex flex-col w-full h-full overflow-auto">
         <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-gray-200">
             <div class="w-20 h-20">
-                @if (Auth::user()->id == $owner->id)
+                @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
                     <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
                         class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
                         <div
@@ -338,7 +338,7 @@
 
 @pushOnce('page')
     <script>
-        @if (Auth::user()->id == $owner->id)
+        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
             ModalView.onShow('createBoard', (modal) => {
                 modal.querySelectorAll("form[action][method]").forEach(
                     form => form.addEventListener("submit", () => PageLoader.show())

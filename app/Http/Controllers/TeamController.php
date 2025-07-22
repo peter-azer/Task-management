@@ -20,26 +20,25 @@ class TeamController extends Controller
         protected TeamLogic $teamLogic,
         protected FileLogic $fileLogic,
         protected UserLogic $userLogic,
-    ) {
-    }
+    ) {}
 
     public function createTeam(Request $request)
     {
-        try{
+        try {
 
             $request->validate([
                 "team_name" => "required|min:5|max:20",
                 "team_description" => "required|min:5|max:90",
                 "team_pattern" => 'sometimes',
             ]);
-            
+
             $createdTeam = $this->teamLogic->createTeam(
                 Auth::user()->id,
                 $request->team_name,
                 $request->team_description,
                 $request->team_pattern,
             );
-            
+
             return redirect()->route("viewTeam", ['team_id' => $createdTeam->id]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors("Error creating team: " . $e->getMessage());
@@ -89,8 +88,14 @@ class TeamController extends Controller
     public function showTeams()
     {
         $user = User::find(Auth::user()->id);
-        $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"]);
-        $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
+        if ($user->hasRole("super-admin")) {
+            $teams = Team::all();
+            $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
+        } else {
+            $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"]);
+            $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
+        }
+
 
         return view("teams")
             ->with("teams", $teams)
