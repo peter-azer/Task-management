@@ -92,13 +92,17 @@ class BoardController extends Controller
 
     public function addCard(Request $request, $team_id, $board_id, $column_id)
     {
-        $board_id = intval($board_id);
-        $column_id = intval($column_id);
-        $card_name = $request->name;
-
-        $newCard = $this->boardLogic->addCard($column_id, $card_name);
-        $this->cardLogic->cardAddEvent($newCard->id, Auth::user()->id, "Created card");
-        return response()->json($newCard);
+        if(auth()->user()->can("create-task")) {
+            $board_id = intval($board_id);
+            $column_id = intval($column_id);
+            $card_name = $request->name;
+            
+            $newCard = $this->boardLogic->addCard($column_id, $card_name);
+            $this->cardLogic->cardAddEvent($newCard->id, Auth::user()->id, "Created card");
+            return response()->json($newCard);
+        }else {
+            return response()->json(["notif" => "Unauthorized"]);
+        }
     }
 
     public function getData($team_id, $board_id)

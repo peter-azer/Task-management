@@ -170,7 +170,11 @@
                     <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}" class="h-12" />
                 </div>
                 <article class="flex flex-col w-full h-20 gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
-                    <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $team->name }}</h3>
+                    <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $team->name }}
+                        <span class="text-xs text-gray-500">
+                            {{ $team->owner_name }}
+                        </span>
+                    </h3>
                     <p class="flex-grow w-full text-xs break-all line-clamp-2 text-ellipsis max-h-8 ">
                         {{ $team->description }}
                     </p>

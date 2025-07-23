@@ -59,6 +59,8 @@
                 </button>
             </form>
             <button id="btn-add"
+                @cannot("create-task") disabled class="opacity-50 cursor-not-allowed flex items-center gap-2 py-1 pl-4 mx-2 mb-2 text-sm transition select-none rounded-2xl hover:bg-slate-200"
+                @endcannot
                 class="flex items-center gap-2 py-1 pl-4 mx-2 mb-2 text-sm transition select-none rounded-2xl hover:bg-slate-200">
                 <x-fas-plus class="w-4 h-4" />
                 Add Card...

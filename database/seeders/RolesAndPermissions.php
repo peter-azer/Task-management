@@ -69,6 +69,18 @@ class RolesAndPermissions extends Seeder
             'delete-team',
             'send-invitation',
             'manage-settings',
+            // project management
+            'manage-projects',
+            'create-project',
+            'edit-project',
+            'delete-project',
+            'view-projects',
+            // task management
+            'manage-tasks',
+            'create-task',
+            'edit-task',
+            'delete-task',
+            'view-tasks',
         ]);
 
         $superAdmin = User::firstOrCreate([

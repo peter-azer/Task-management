@@ -53,14 +53,15 @@
         <section class="flex h-full min-w-full gap-4 p-4">
             <div class="flex h-full gap-4" id="column-container" data-role="board" data-id="{{ $board->id }}">
             </div>
+            @can("manage-tasks")
             <div onclick="ModalView.show('addCol')"
                 class="flex flex-col flex-shrink-0 gap-2 px-4 py-2 transition shadow-lg cursor-pointer select-none h-min w-72 rounded-xl bg-slate-100 hover:scale-105 hover:relative">
                 <div class="flex items-center justify-center gap-4 text-black">
                     <x-fas-plus class="w-4 h-4" />
                     <p>Add...</p>
                 </div>
-
             </div>
+            @endcan
         </section>
     </div>
 

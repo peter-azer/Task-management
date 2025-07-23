@@ -89,14 +89,16 @@ class TeamController extends Controller
     {
         $user = User::find(Auth::user()->id);
         if ($user->hasRole("super-admin")) {
-            $teams = Team::all();
+            $teams = Team::with('users')->get();
             $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
         } else {
             $teams = $this->teamLogic->getUserTeams($user->id, ["Member", "Owner"]);
             $invites = $this->teamLogic->getUserTeams($user->id, ["Pending"]);
         }
-
-
+        foreach ($teams as $team) {
+            $owner = $team->users->firstWhere('pivot.status', 'Owner');
+            $team->owner_name = $owner?->name ?? 'N/A';
+        }
         return view("teams")
             ->with("teams", $teams)
             ->with("patterns", TeamLogic::PATTERN)
