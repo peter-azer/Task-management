@@ -23,11 +23,13 @@
         </a>
 
         <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
-            <div data-role="menu-item" onclick="ModalView.show('editCard')"
-                class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                <x-fas-pen class="w-4 h-4" />
-                <p> Edit </p>
-            </div>
+            @can("edit-task")
+                <div data-role="menu-item" onclick="ModalView.show('editCard')"
+                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                    <x-fas-pen class="w-4 h-4" />
+                    <p> Edit </p>
+                </div>
+            @endcan
             <hr>
             @if ($workers->contains(Auth::user()))
                 <div data-role="menu-item" onclick="ModalView.show('leaveCard')"
@@ -36,11 +38,13 @@
                     <p> Quit Card </p>
                 </div>
             @else
-                <div data-role="menu-item" onclick="ModalView.show('assignSelf')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-plus class="w-4 h-4" />
-                    <p> Assign Me </p>
-                </div>
+                @can("manage-tasks")
+                    <div data-role="menu-item" onclick="ModalView.show('assignTask')"
+                        class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
+                        <x-fas-plus class="w-4 h-4" />
+                        <p> Assign to Member </p>
+                    </div>
+                @endcan
             @endif
             @if (Auth::user()->id == $owner->id)
                 <hr class="w-full border">
@@ -151,18 +155,26 @@
             </form>
         </template>
     @endif
-    <template is-modal="assignSelf">
+    @can("manage-tasks")
+    <template is-modal="assignTask">
         <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
-            action="{{ route('assignSelf', ['team_id' => $team->id, 'board_id' => $board->id, 'card_id' => $card->id]) }}">
+            action="{{ route('assignTask', ['team_id' => $team->id, 'board_id' => $board->id, 'card_id' => $card->id]) }}">
             @csrf
-            <input type="hidden" name="id" value="{{ Auth::user()->id }}">
-            <p class="mb-6 text-lg text-center"> Are you sure you want to join this card?</p>
+            <p class="mb-6 text-lg text-center"> Assign this task to member</p>
+            <select name="id" id="id">
+                @foreach ($team_members as $team_member)
+                    <option value="{{ $team_member->id }}" @if (Auth::user()->id == $team_member->id) selected @endif>
+                        {{ $team_member->name }}
+                    </option>
+                @endforeach
+            </select>
             <div class="flex gap-6">
-                <x-form.button type="submit">Yes</x-form.button>
-                <x-form.button type="button" action="ModalView.close()">No</x-form.button>
+                <x-form.button type="submit">Assign</x-form.button>
+                <x-form.button type="button" action="ModalView.close()">Cancel</x-form.button>
             </div>
         </form>
     </template>
+    @endcan
 
     <template is-modal="leaveCard">
         <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
@@ -207,7 +219,7 @@
             );
         });
 
-        ModalView.onShow('assignSelf', (modal) => {
+        ModalView.onShow('assignTask', (modal) => {
             modal.querySelectorAll("form[action][method]").forEach(
                 form => form.addEventListener("submit", () => PageLoader.show())
             );

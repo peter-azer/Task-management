@@ -7,6 +7,7 @@ use App\Logic\TeamLogic;
 use App\Models\Board;
 use App\Models\Card;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,7 @@ class CardController extends Controller
         $card = Card::find($card_id);
         $board = Board::find($board_id);
         $team = Team::find($team_id);
+        $team_members = $this->teamLogic->getTeamMember($team_id);
         $owner = $this->teamLogic->getTeamOwner($team_id);
         $workers = $this->cardLogic->getWorkers($card_id);
         $hist = $this->cardLogic->getHistories($card_id);
@@ -31,6 +33,7 @@ class CardController extends Controller
             ->with("card", $card)
             ->with("board", $board)
             ->with("team", $team)
+            ->with("team_members", $team_members)
             ->with("workers", $workers)
             ->with("histories", $hist)
             ->with("owner", $owner);
@@ -41,13 +44,14 @@ class CardController extends Controller
         return redirect()->back();
     }
 
-    public function assignSelf(Request $request, $team_id, $board_id, $card_id)
+    public function assignTask(Request $request, $team_id, $board_id, $card_id)
     {
-        $user_id = Auth::user()->id;
+        $user_id = $request->id;
+        $user = User::find($user_id);
         $card_id = intval($card_id);
         $this->cardLogic->addUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Joined card.");
-        return redirect()->back()->with("notif", ["Success\nAdded yourself to the card"]);
+        return redirect()->back()->with("notif", ["Success\nAdded {$user->name} to the card"]);
     }
 
     public function leaveCard(Request $request, $team_id, $board_id, $card_id)
