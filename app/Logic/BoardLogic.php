@@ -95,7 +95,7 @@ class BoardLogic
             "previous_id" => $lastCard ? $lastCard->id : null
         ]);
 
-        if($lastCard){
+        if ($lastCard) {
             $lastCard->next_id = $newCard->id;
             $lastCard->save();
         }
@@ -105,6 +105,7 @@ class BoardLogic
 
     public function getData(int $board_id)
     {
+        $user = auth()->user();
         $columns = collect();
         $board = Board::find($board_id);
 
@@ -114,19 +115,46 @@ class BoardLogic
 
         while ($column) {
             $cards = collect();
-            $card = Card::where("column_id", $column->id)
-                ->whereNull('previous_id')
-                ->first();
+
+            // Base card query
+            $cardQuery = Card::where("column_id", $column->id)
+                ->with("members") // <-- this is good
+                ->whereNull('previous_id');
+
+            // Restrict to member's cards only if not admin or super-admin
+            if (!$user->hasRole('admin') && !$user->hasRole('super-admin')) {
+                $cardQuery->whereHas('members', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                });
+            }
+
+            $card = $cardQuery->first();
+
             while ($card) {
                 $card->setHidden(['nextCard', "created_at", "updated_at", "column_id", "previous_id", "next_id"]);
                 $cards->push($card);
-                $card = $card->nextCard;
+
+                // Move to next card
+                $nextCardQuery = Card::where('id', $card->next_id)
+                    ->with("members"); // <-- ✅ ADD THIS
+
+                // Same restriction for next cards
+                if (!$user->hasRole('admin') && !$user->hasRole('super-admin')) {
+                    $nextCardQuery->whereHas('members', function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
+                }
+
+                $card = $nextCardQuery->first();
             }
+
             $column->setHidden(['nextColumn', 'updated_at', 'created_at', 'previous_id', "next_id", "board_id"]);
             $column->cards = $cards->values();
             $columns->push($column);
             $column = $column->nextColumn;
         }
+
+
         $board->columns = $columns->values();
         $board->setHidden(["team_id", "image_path", "created_at", "updated_at"]);
         return $board;
@@ -141,37 +169,37 @@ class BoardLogic
         $top_card = null;
         $bottom_card = null;
 
-        if($column == null) return null;
-        if($bottom_card_id != 0) $bottom_card = Card::find($bottom_card_id);
-        if($bottom_card != null) $top_card = Card::find($bottom_card->previous_id);
-        if($target_card->previous_id) $previous_top_card = Card::find($target_card->previous_id);
-        if($target_card->next_id) $previous_bottom_card = Card::find($target_card->next_id);
-        if($bottom_card == null && $top_card == null) $top_card = Card::find($top_card_id);
+        if ($column == null) return null;
+        if ($bottom_card_id != 0) $bottom_card = Card::find($bottom_card_id);
+        if ($bottom_card != null) $top_card = Card::find($bottom_card->previous_id);
+        if ($target_card->previous_id) $previous_top_card = Card::find($target_card->previous_id);
+        if ($target_card->next_id) $previous_bottom_card = Card::find($target_card->next_id);
+        if ($bottom_card == null && $top_card == null) $top_card = Card::find($top_card_id);
 
         //insert in middle
         $target_card->column_id = $column->id;
         $target_card->previous_id = null;
         $target_card->next_id = null;
-        if($previous_bottom_card){
+        if ($previous_bottom_card) {
             $previous_bottom_card->previous_id = $previous_top_card ? $previous_top_card->id : null;
         }
-        if($previous_top_card){
+        if ($previous_top_card) {
             $previous_top_card->next_id = $previous_bottom_card ? $previous_bottom_card->id : null;
         }
-        if($bottom_card){
+        if ($bottom_card) {
             $target_card->next_id = $bottom_card->id;
             $bottom_card->previous_id = $target_card->id;
         }
-        if($top_card){
+        if ($top_card) {
             $target_card->previous_id = $top_card->id;
             $top_card->next_id = $target_card->id;
         }
 
         $target_card->save();
-        if($bottom_card) $bottom_card->save();
-        if($top_card) $top_card->save();
-        if($previous_bottom_card) $previous_bottom_card->save();
-        if($previous_top_card) $previous_top_card->save();
+        if ($bottom_card) $bottom_card->save();
+        if ($top_card) $top_card->save();
+        if ($previous_bottom_card) $previous_bottom_card->save();
+        if ($previous_top_card) $previous_top_card->save();
         return $target_card;
     }
 
@@ -183,51 +211,52 @@ class BoardLogic
         $top_column = null;
         $bottom_column = null;
 
-        if($right_column_id != 0) $bottom_column = Column::find($right_column_id);
-        if($bottom_column != null) $top_column = Column::find($bottom_column->previous_id);
-        if($target_column->previous_id) $previous_top_column = Column::find($target_column->previous_id);
-        if($target_column->next_id) $previous_bottom_column = Column::find($target_column->next_id);
-        if($bottom_column == null && $top_column == null) $top_column = Column::find($left_column_id);
+        if ($right_column_id != 0) $bottom_column = Column::find($right_column_id);
+        if ($bottom_column != null) $top_column = Column::find($bottom_column->previous_id);
+        if ($target_column->previous_id) $previous_top_column = Column::find($target_column->previous_id);
+        if ($target_column->next_id) $previous_bottom_column = Column::find($target_column->next_id);
+        if ($bottom_column == null && $top_column == null) $top_column = Column::find($left_column_id);
 
         //insert in middle
         $target_column->previous_id = null;
         $target_column->next_id = null;
-        if($previous_bottom_column){
+        if ($previous_bottom_column) {
             $previous_bottom_column->previous_id = $previous_top_column ? $previous_top_column->id : null;
         }
-        if($previous_top_column){
+        if ($previous_top_column) {
             $previous_top_column->next_id = $previous_bottom_column ? $previous_bottom_column->id : null;
         }
-        if($bottom_column){
+        if ($bottom_column) {
             $target_column->next_id = $bottom_column->id;
             $bottom_column->previous_id = $target_column->id;
         }
-        if($top_column){
+        if ($top_column) {
             $target_column->previous_id = $top_column->id;
             $top_column->next_id = $target_column->id;
         }
 
         $target_column->save();
-        if($bottom_column) $bottom_column->save();
-        if($top_column) $top_column->save();
-        if($previous_bottom_column) $previous_bottom_column->save();
-        if($previous_top_column) $previous_top_column->save();
+        if ($bottom_column) $bottom_column->save();
+        if ($top_column) $top_column->save();
+        if ($previous_bottom_column) $previous_bottom_column->save();
+        if ($previous_top_column) $previous_top_column->save();
         return $target_column;
     }
 
-    function deleteCol(int $target_column_id) {
+    function deleteCol(int $target_column_id)
+    {
         $target_column = Column::find($target_column_id);
         $top_column = null;
         $bottom_column = null;
-        if(!$target_column) return;
-        if($target_column->previous_id) $top_column = Column::find($target_column->previous_id);
-        if($target_column->next_id) $bottom_column = Column::find($target_column->next_id);
+        if (!$target_column) return;
+        if ($target_column->previous_id) $top_column = Column::find($target_column->previous_id);
+        if ($target_column->next_id) $bottom_column = Column::find($target_column->next_id);
 
-        if($top_column){
+        if ($top_column) {
             $top_column->next_id = $bottom_column ? $bottom_column->id : null;
             $top_column->save();
         }
-        if($bottom_column){
+        if ($bottom_column) {
             $bottom_column->previous_id = $top_column ? $top_column->id : null;
             $bottom_column->save();
         }

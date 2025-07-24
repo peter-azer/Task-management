@@ -26,7 +26,7 @@ class Column extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = [
+    protected $hidden = [   
         'board_id',
         'previous_id',
         'next_id',

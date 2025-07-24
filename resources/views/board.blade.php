@@ -52,6 +52,7 @@
         class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
             <div class="flex h-full gap-4" id="column-container" data-role="board" data-id="{{ $board->id }}">
+                
             </div>
             @can("manage-tasks")
             <div onclick="ModalView.show('addCol')"
