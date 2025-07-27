@@ -10,32 +10,85 @@
 <Script>
     const cardTemplate = document.querySelector("template#card");
     class Card {
-        constructor(id, name, members, board) {
+        constructor(id, name, members, start_date, end_date, is_done, board) {
             this.board = board;
             const content = cardTemplate.content.cloneNode(true);
             const node = document.createElement("div");
             node.append(content);
             this.ref = node.children[0];
 
-            console.log("Card created", id, name, members);
+            const avatarsHtml = (() => {
+                const now = new Date();
+                const startDate = new Date(start_date);
+                const endDate = new Date(end_date);
+                const isDone = is_done;
+                const isLate = now > endDate && isDone == false;
 
-            const avatarsHtml = `
-  <div class="flex justify-start gap-3">
-    ${
-      (members ?? []).map(m => {
-        const initials = m?.name?.split(" ").map(p => p[0]).join("").substring(0, 2).toUpperCase();
-        return m?.image_path
-          ? `<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-white">
-               <img src="/${m.image_path}" alt="${m.name}" class="object-cover w-full h-full" />
-             </div>`
-          : `<div class="w-8 h-8 flex items-center justify-center rounded-full bg-black text-white text-xs font-bold border-2 border-white">
-               ${initials}
-             </div>`;
-      }).join('')
-    }
+                const statusText = isDone ?
+                    '✅' :
+                    isLate ?
+                    '⛔' :
+                    '⏳';
+
+                const bgClass = isDone ?
+                    'bg-green-100' :
+                    isLate ?
+                    'bg-red-100' :
+                    'bg-yellow-100';
+
+                const textClass = isDone ?
+                    'text-green-700' :
+                    isLate ?
+                    'text-red-700' :
+                    'text-yellow-700';
+
+                const formatDate = (date) => {
+                    const options = {
+                        month: 'short',
+                        day: 'numeric'
+                    };
+                    const timeString = date.getHours() || date.getMinutes() ?
+                        ` - ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` :
+                        '';
+                    return `${date.toLocaleDateString(undefined, options)}${timeString}`;
+                };
+
+                return `
+                <div class="p-4 rounded-lg shadow-md ${bgClass} ${textClass} space-y-3">
+
+                  <!-- Avatars -->
+                  <div class="relative flex justify-start gap-3 items-center">
+                    ${
+                      (members ?? []).map(m => {
+                        const initials = m?.name?.split(" ").map(p => p[0]).join("").substring(0, 2).toUpperCase();
+                        return m?.image_path
+                          ? `<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-white">
+                               <img src="/${m.image_path}" alt="${m.name}" class="object-cover w-full h-full" />
+                             </div>`
+                          : `<div class="w-8 h-8 flex items-center justify-center rounded-full bg-black text-white text-xs font-bold border-2 border-white">
+                               ${initials}
+                             </div>`;
+                      }).join('')
+                    }
+                    <div class="absolute right-0 text-2xl">${statusText}</div> 
+                  </div>
+                  
+                  <!-- Dates and Status -->
+                  <div class="flex flex-wrap justify-center items-center text-xs gap-2">
+                    <div>${formatDate(startDate)}</div>
+                    <div>${formatDate(endDate)}</div>
+                    </div>
+                </div>
+              `;
+            })();
+
+            this.ref.innerHTML = `
+  <div class="flex items-center gap-2">
+    <input type="checkbox" class="task-done-checkbox accent-green-600" ${is_done ? 'checked' : ''} />
+    <span class="font-medium">${name}</span>
   </div>
+  ${avatarsHtml}
 `;
-            this.ref.innerHTML = `${name} ${avatarsHtml}`;
             this.ref.dataset.id = id;
             this.ref.setAttribute('draggable', (id != null));
 

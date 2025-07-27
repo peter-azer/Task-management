@@ -237,7 +237,7 @@
             });
 
             for (const cardData of cards) {
-                const card = new Card(cardData.id, cardData.name, cardData.members, this.board);
+                const card = new Card(cardData.id, cardData.name, cardData.members, cardData.start_date, cardData.end_date, cardData.is_done, this.board);
                 card.mountTo(this);
             }
 
