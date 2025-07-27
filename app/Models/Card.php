@@ -19,6 +19,9 @@ class Card extends Model
         'name',
         'description',
         'previous_id',
+        'start_date',
+        'end_date',
+        'is_done',
         'next_id',
     ];
 

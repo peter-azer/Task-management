@@ -34,6 +34,8 @@ class CardController extends Controller
             ->with("board", $board)
             ->with("team", $team)
             ->with("team_members", $team_members)
+            ->with("start_date", $card->start_date)
+            ->with("end_date", $card->end_date)
             ->with("workers", $workers)
             ->with("histories", $hist)
             ->with("owner", $owner);
@@ -76,12 +78,16 @@ class CardController extends Controller
     public function updateCard(Request $request, $team_id, $board_id, $card_id)
     {
         $request->validate([
-            "card_name" => "required|max:95"
+            "card_name" => "required|max:95",
+            "start_date" => "nullable|date",
+            "end_date" => "nullable|date|after_or_equal:start_date",
         ]);
         $user_id = AUth::user()->id;
         $card_id = intval($card_id);
         $card = Card::find($card_id);
         $card->name = $request->card_name;
+        $card->start_date = $request->start_date;
+        $card->end_date = $request->end_date;
         $card->description = $request->card_description;
         $card->save();
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Updated card informations.");
