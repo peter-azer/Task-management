@@ -138,7 +138,7 @@
                 const card_id = this.ref.dataset.id;
 
                 ServerRequest.post(`{{ url('team/'.$teamid.'/board') }}/${board_id}/card/${card_id}/done`, {
-                    is_done: isChecked == true ? 1 : 0,
+                    is_done: isChecked === true ? 1 : 0,
                 }).then(response => {
                     console.log("Task done status updated", response.data);
                     // Optionally: update UI or status indicators here
