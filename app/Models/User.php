@@ -54,6 +54,11 @@ class User extends Authenticatable
             ->withPivot("status");
     }
 
+    public function cards()
+    {
+        return $this->belongsToMany(Card::class, "card_user", "user_id", "card_id");
+    }
+    
     public function teamRelations()
     {
         return $this->hasMany(UserTeam::class);

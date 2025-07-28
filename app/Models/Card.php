@@ -42,6 +42,11 @@ class Card extends Model
         return $this->belongsTo(Column::class);
     }
 
+    public function column()
+    {
+        return $this->belongsTo(Column::class);
+    }
+
     public function previousCard()
     {
         return $this->belongsTo(Card::class, 'previous_id');
@@ -56,6 +61,7 @@ class Card extends Model
     {
         return $this->belongsToMany(User::class, "card_user", "card_id", "user_id");
     }
+
     public function members()
 {
     return $this->belongsToMany(User::class, 'card_user', 'card_id', 'user_id');
