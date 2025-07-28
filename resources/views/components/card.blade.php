@@ -24,19 +24,19 @@
                 const isDone = is_done;
                 const isLate = now > endDate && isDone == false;
 
-                const statusText = isDone ?
+                const statusText = isDone == 1 ?
                     '✅' :
                     isLate ?
                     '⛔' :
                     '⏳';
 
-                const bgClass = isDone ?
+                const bgClass = isDone == 1 ?
                     'bg-green-100' :
                     isLate ?
                     'bg-red-100' :
                     'bg-yellow-100';
 
-                const textClass = isDone ?
+                const textClass = isDone == 1 ?
                     'text-green-700' :
                     isLate ?
                     'text-red-700' :
