@@ -256,11 +256,11 @@ background: #ccc;
 .bg-pattern-zig-zag {
     background-color: #ffffff;
     opacity: 1;
-    background: linear-gradient(135deg, #79797955 25%, transparent 25%) -21px 0/
+    background: linear-gradient(135deg, #0f549055 25%, transparent 25%) -21px 0/
             42px 42px,
-        linear-gradient(225deg, #797979 25%, transparent 25%) -21px 0/ 42px 42px,
-        linear-gradient(315deg, #79797955 25%, transparent 25%) 0px 0/ 42px 42px,
-        linear-gradient(45deg, #797979 25%, #ffffff 25%) 0px 0/ 42px 42px;
+        linear-gradient(225deg, #0f5490 25%, transparent 25%) -21px 0/ 42px 42px,
+        linear-gradient(315deg, #0f549055 25%, transparent 25%) 0px 0/ 42px 42px,
+        linear-gradient(45deg, #0f5490 25%, #ffffff 25%) 0px 0/ 42px 42px;
 }
 
 .bg-pattern-isometric {
@@ -268,51 +268,51 @@ background: #ccc;
     opacity: 1;
     background-image: linear-gradient(
             30deg,
-            #797979 12%,
+            #0f5490 12%,
             transparent 12.5%,
             transparent 87%,
-            #797979 87.5%,
-            #797979
+            #0f5490 87.5%,
+            #0f5490
         ),
         linear-gradient(
             150deg,
-            #797979 12%,
+            #0f5490 12%,
             transparent 12.5%,
             transparent 87%,
-            #797979 87.5%,
-            #797979
+            #0f5490 87.5%,
+            #0f5490
         ),
         linear-gradient(
             30deg,
-            #797979 12%,
+            #0f5490 12%,
             transparent 12.5%,
             transparent 87%,
-            #797979 87.5%,
-            #797979
+            #0f5490 87.5%,
+            #0f5490
         ),
         linear-gradient(
             150deg,
-            #797979 12%,
+            #0f5490 12%,
             transparent 12.5%,
             transparent 87%,
-            #797979 87.5%,
-            #797979
+            #0f5490 87.5%,
+            #0f5490
         ),
         linear-gradient(
             60deg,
-            #79797977 25%,
+            #0f549077 25%,
             transparent 25.5%,
             transparent 75%,
-            #79797977 75%,
-            #79797977
+            #0f549077 75%,
+            #0f549077
         ),
         linear-gradient(
             60deg,
-            #79797977 25%,
+            #0f549077 25%,
             transparent 25.5%,
             transparent 75%,
-            #79797977 75%,
-            #79797977
+            #0f549077 75%,
+            #0f549077
         );
     background-size: 42px 74px;
     background-position: 0 0, 0 0, 21px 37px, 21px 37px, 0 0, 21px 37px;
@@ -326,23 +326,23 @@ background: #ccc;
             transparent 0,
             #ffffff 21px
         ),
-        repeating-linear-gradient(#79797955, #797979);
+        repeating-linear-gradient(#0f549055, #0f5490);
 }
 
 .bg-pattern-triangle {
     background-color: #ffffff;
     opacity: 1;
-    background-image: linear-gradient(45deg, #797979 50%, #ffffff 50%);
+    background-image: linear-gradient(45deg, #0f5490 50%, #ffffff 50%);
     background-size: 21px 21px;
 }
 
 .bg-pattern-paper {
     background-color: #ffffff;
     opacity: 1;
-    background-image: linear-gradient(#797979 4.2px, transparent 4.2px),
-        linear-gradient(90deg, #797979 4.2px, transparent 4.2px),
-        linear-gradient(#797979 2.1px, transparent 2.1px),
-        linear-gradient(90deg, #797979 2.1px, #ffffff 2.1px);
+    background-image: linear-gradient(#0f5490 4.2px, transparent 4.2px),
+        linear-gradient(90deg, #0f5490 4.2px, transparent 4.2px),
+        linear-gradient(#0f5490 2.1px, transparent 2.1px),
+        linear-gradient(90deg, #0f5490 2.1px, #ffffff 2.1px);
     background-size: 105px 105px, 105px 105px, 21px 21px, 21px 21px;
     background-position: -4.2px -4.2px, -4.2px -4.2px, -2.1px -2.1px,
         -2.1px -2.1px;
@@ -352,8 +352,8 @@ background: #ccc;
     opacity: 1;
     background-image: radial-gradient(
         ellipse farthest-corner at 21px 21px,
-        #797979,
-        #797979 50%,
+        #0f5490,
+        #0f5490 50%,
         #ffffff 50%
     );
     background-size: 21px 21px;
@@ -363,19 +363,19 @@ background: #ccc;
     opacity: 1;
     background-image: repeating-linear-gradient(
             45deg,
-            #797979 25%,
+            #0f5490 25%,
             transparent 25%,
             transparent 75%,
-            #797979 75%,
-            #797979
+            #0f5490 75%,
+            #0f5490
         ),
         repeating-linear-gradient(
             45deg,
-            #797979 25%,
+            #0f5490 25%,
             #ffffff 25%,
             #ffffff 75%,
-            #797979 75%,
-            #797979
+            #0f5490 75%,
+            #0f5490
         );
     background-position: 0 0, 21px 21px;
     background-size: 42px 42px;
@@ -387,29 +387,29 @@ background: #ccc;
         -45deg,
         #ffffff,
         #ffffff 50%,
-        #797979 50%,
-        #797979
+        #0f5490 50%,
+        #0f5490
     );
     background-size: 21px 21px;
 }
 .bg-pattern-polka {
     background-color: #ffffff;
     opacity: 1;
-    background-image: radial-gradient(#797979 3px, #ffffff 3px);
+    background-image: radial-gradient(#0f5490 3px, #ffffff 3px);
     background-size: 21px 21px;
 }
 .bg-pattern-polka-2 {
     background-color: #ffffff;
     opacity: 1;
-    background-image: radial-gradient(#797979 3px, transparent 3px),
-        radial-gradient(#797979 3px, #ffffff 3px);
+    background-image: radial-gradient(#0f5490 3px, transparent 3px),
+        radial-gradient(#0f5490 3px, #ffffff 3px);
     background-size: 40px 40px;
     background-position: 0 0, 21px 21px;
 }
 .bg-pattern-line-bold-horizontal {
     background-color: #ffffff;
     opacity: 1;
-    background-image: linear-gradient(0deg, #ffffff 50%, #797979 50%);
+    background-image: linear-gradient(0deg, #ffffff 50%, #0f5490 50%);
     background-size: 21px 21px;
 }
 .bg-pattern-line-bold-vertical {
@@ -417,8 +417,8 @@ background: #ccc;
     opacity: 1;
     background-image: linear-gradient(
         to right,
-        #797979,
-        #797979 10.5px,
+        #0f5490,
+        #0f5490 10.5px,
         #ffffff 10.5px,
         #ffffff
     );
@@ -430,8 +430,8 @@ background: #ccc;
     background-size: 21px 21px;
     background-image: repeating-linear-gradient(
         45deg,
-        #797979 0,
-        #797979 2.1px,
+        #0f5490 0,
+        #0f5490 2.1px,
         #ffffff 0,
         #ffffff 50%
     );
@@ -439,17 +439,17 @@ background: #ccc;
 .bg-pattern-box {
     background-color: #ffffff;
     opacity: 1;
-    background-image: linear-gradient(#797979 2.1px, transparent 2.1px),
-        linear-gradient(to right, #797979 2.1px, #ffffff 2.1px);
+    background-image: linear-gradient(#0f5490 2.1px, transparent 2.1px),
+        linear-gradient(to right, #0f5490 2.1px, #ffffff 2.1px);
     background-size: 42px 42px;
 }
 .bg-pattern-zig-zag-flat {
     background-color: #ffffff;
     opacity: 1;
-    background-image: linear-gradient(135deg, #797979 25%, transparent 25%),
-        linear-gradient(225deg, #797979 25%, transparent 25%),
-        linear-gradient(45deg, #797979 25%, transparent 25%),
-        linear-gradient(315deg, #797979 25%, #ffffff 25%);
+    background-image: linear-gradient(135deg, #0f5490 25%, transparent 25%),
+        linear-gradient(225deg, #0f5490 25%, transparent 25%),
+        linear-gradient(45deg, #0f5490 25%, transparent 25%),
+        linear-gradient(315deg, #0f5490 25%, #ffffff 25%);
     background-position: 21px 0, 21px 0, 0 0, 0 0;
     background-size: 42px 42px;
     background-repeat: repeat;

@@ -4,10 +4,11 @@
 <div id="app" x-data="{ sidebar_is_open: true }" data-role="layout-page" class="flex w-full h-screen overflow-hidden">
     <aside class="flex flex-col h-full overflow-hidden transition-all border-r-2 border-b-gray-200"
         x-bind:class="sidebar_is_open ? 'w-80' : 'w-0'">
-        <h1 id="logo"
-            class="flex items-center justify-center w-full h-16 text-2xl font-extrabold tracking-widest cursor-default select-none">
-            Taskly.
-        </h1>
+        <img
+            src="{{ asset('image/logo.png') }}"
+            id="logo"
+            class="flex items-center justify-center w-48 my-5 mx-auto  text-2xl font-extrabold tracking-widest cursor-default select-none" />
+
         <section class="flex flex-col items-center justify-start w-full gap-2 overflow-x-hidden overflow-y-auto">
             <div id="menu" class="flex flex-col items-center justify-start w-full">
 
