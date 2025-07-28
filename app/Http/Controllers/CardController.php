@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CardController extends Controller
 {
-    public function __construct(protected TeamLogic $teamLogic, protected CardLogic $cardLogic)
-    {
-    }
+    public function __construct(protected TeamLogic $teamLogic, protected CardLogic $cardLogic) {}
     public function showCard(Request $request, $team_id, $board_id, $card_id)
     {
         $board_id = intval($board_id);
@@ -94,6 +92,21 @@ class CardController extends Controller
         return redirect()->back()->with("notif", ["Succss\nCard updated successfully"]);
     }
 
+    public function markDone(Request $request, $team_id, $board_id, $card_id)
+    {
+        $validatedData = $request->validate([
+            'is_done' => 'required|boolean',
+        ]);
+        // $is_done = $validatedData['is_done'] =  ? 1 : 0;
+        $user_id = auth()->id();
+        $card = Card::findOrFail(intval($card_id));
+        $card->update($validatedData);
+
+        $statusText = $card->is_done ? 'marked as done' : 'marked as not done';
+        $this->cardLogic->cardAddEvent($card_id, $user_id, "Card was $statusText.");
+
+        return response()->json(['message' => 'Card status updated.', 'is_done' => $card->is_done]);
+    }
     public function addComment(Request $request, $team_id, $board_id, $card_id)
     {
         $request->validate(["content" => "required|max:200"]);

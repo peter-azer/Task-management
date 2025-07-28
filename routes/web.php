@@ -55,6 +55,7 @@ Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("t
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/leave", [CardController::class, "leaveCard"])->name("leaveCard");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/delete", [CardController::class, "deleteCard"])->name("deleteCard");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/update", [CardController::class, "updateCard"])->name("updateCard");
+Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/done", [CardController::class, "markDone"])->name("markDone");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/comment", [CardController::class, "addComment"])->name("commentCard");
 
 Route::middleware(["auth", "auth.session"])->get("user/setting", [UserController::class, "showSetting"])->name("setting");

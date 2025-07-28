@@ -84,7 +84,13 @@
 
             this.ref.innerHTML = `
   <div class="flex items-center gap-2">
-    <input type="checkbox" class="task-done-checkbox accent-green-600" ${is_done ? 'checked' : ''} />
+    <input 
+    type="checkbox" 
+    name="is_done"
+    class="task-done-checkbox accent-green-600" 
+    ${is_done ? 'checked' : ''} 
+    onclick="event.stopPropagation()" 
+/>
     <span class="font-medium">${name}</span>
   </div>
   ${avatarsHtml}
@@ -123,6 +129,23 @@
                         console.log(response.data);
                     });
             })
+
+            const checkbox = this.ref.querySelector(".task-done-checkbox");
+            checkbox.addEventListener("change", (e) => {
+                const isChecked = e.target.checked;
+                console.log("Checkbox changed:", isChecked);
+                const board_id = this.board.ref.dataset.id;
+                const card_id = this.ref.dataset.id;
+
+                ServerRequest.post(`{{ url('team/'.$teamid.'/board') }}/${board_id}/card/${card_id}/done`, {
+                    is_done: isChecked == true ? 1 : 0,
+                }).then(response => {
+                    console.log("Task done status updated", response.data);
+                    // Optionally: update UI or status indicators here
+                }).catch(err => {
+                    console.error("Error updating task status", err);
+                });
+            });
         }
 
         setId(id) {
