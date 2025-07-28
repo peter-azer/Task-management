@@ -88,7 +88,7 @@
     type="checkbox" 
     name="is_done"
     class="task-done-checkbox accent-green-600" 
-    ${is_done ? 'checked' : ''} 
+    ${is_done == 1 ? "checked" : "" }
     onclick="event.stopPropagation()" 
 />
     <span class="font-medium">${name}</span>
