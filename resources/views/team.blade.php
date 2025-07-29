@@ -2,14 +2,14 @@
 
 @section('app-header')
     <div class="flex items-center gap-2">
-        <h1 class="text-xl font-bold">Team:</h1>
+        <h1 class="text-xl font-bold text-[#0a2436]">Team:</h1>
         <p class="text-xl">{{ $team->name }}</p>
     </div>
 @endsection
 
 @section('app-side')
     <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
-        <a class="w-full p-2 overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl"
+        <a class="w-full p-2 overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl"
             href="{{ route('viewTeam', ['team_id' => $team->id]) }}">
             <div class="flex items-center w-full gap-2">
                 <div class="w-16 h-16">
@@ -17,49 +17,49 @@
                         class="!w-16 !h-16 !aspect-square !text-xl" />
                 </div>
                 <article class="flex flex-col gap-2 text-sm">
-                    <h2 class="max-w-full overflow-hidden font-bold truncate">{{ $team->name }}</h2>
-                    <p class="text-sm line-clamp-3">
+                    <h2 class="max-w-full overflow-hidden font-bold truncate text-[#d0d7dd]">{{ $team->name }}</h2>
+                    <p class="text-sm line-clamp-3 text-[#d0d7dd]">
                         {{ $team->description }}
                     </p>
                 </article>
             </div>
         </a>
 
-        <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
+        <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
             @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
                 <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-pen class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
                     <p> Edit </p>
                 </div>
                 <hr class="w-full border">
                 <div data-role="menu-item" onclick="ModalView.show('manageMember')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-user-gear class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-user-gear class="w-4 h-4 text-[#2c8bc6]" />
                     <p>Members</p>
                 </div>
                 <hr class="w-full border">
                 <div data-role="menu-item" onclick="ModalView.show('inviteMember')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-user-plus class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-user-plus class="w-4 h-4 text-[#2c8bc6]" />
                     <p>Invite</p>
                 </div>
                 <hr class="w-full border">
                 <div data-role="menu-item" onclick="ModalView.show('createBoard')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-table-columns class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-table-columns class="w-4 h-4 text-[#2c8bc6]" />
                     <p>Add Board</p>
                 </div>
                 <hr class="w-full border">
                 <div data-role="menu-item" onclick="ModalView.show('deleteTeam')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-trash class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-trash class="w-4 h-4 text-red-300" />
                     <p>Delete</p>
                 </div>
             @else
                 <div data-role="menu-item" onclick="ModalView.show('leaveTeam')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-right-from-bracket class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-right-from-bracket class="w-4 h-4 text-red-300" />
                     <p> Leave Team </p>
                 </div>
             @endif
@@ -81,7 +81,7 @@
 
         <template is-modal="updateTeam">
             <div class="flex flex-col w-full gap-4 p-4">
-                <h1 class="text-3xl font-bold">Edit Team</h1>
+                <h1 class="text-3xl text-[#0a2436] font-bold">Edit Team</h1>
                 <hr>
                 <form action="{{ route('doTeamDataUpdate', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
                     @csrf
@@ -93,11 +93,11 @@
                         <label class="pl-6">Team's Background</label>
                         <input type="hidden" id="pattern-field" name="team_pattern" x-bind:value="selected">
                         <div
-                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-[#e0edf3] h-36 rounded-xl">
                             @foreach ($patterns as $pattern)
                                 <div x-on:click="selected = '{{ $pattern }}'"
-                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
-                                    class="{{ $pattern == $team->pattern ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-pattern-{{ $pattern }} hover:border-black">
+                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-[#0f5490]' : 'border-[#e0edf3]'"
+                                    class="{{ $pattern == $team->pattern ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-pattern-{{ $pattern }} hover:border-[#0f5490]">
                                     <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
                                         class="flex items-center justify-center w-full h-full">
                                         <x-fas-circle-check class="w-6 h-6" />
@@ -114,7 +114,7 @@
 
         <template is-modal="createBoard">
             <div class="flex flex-col w-full gap-4 p-4">
-                <h1 class="text-3xl font-bold">Create Board</h1>
+                <h1 class="text-3xl text-[#0a2436] font-bold">Create Board</h1>
                 <hr>
                 <form action="{{ route('createBoard', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
                     @csrf
@@ -124,11 +124,11 @@
                         <label class="pl-6">Board's Color</label>
                         <input type="hidden" id="pattern-field" name="board_pattern" x-bind:value="selected">
                         <div
-                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-gray-200 h-36 rounded-xl">
+                            class="flex items-center justify-start w-full max-w-2xl gap-2 px-4 py-2 overflow-hidden overflow-x-scroll border-2 border-[#e0edf3] h-36 rounded-xl">
                             @foreach ($backgrounds as $pattern)
                                 <div x-on:click="selected = '{{ $pattern }}'"
-                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-black' : 'border-gray-200'"
-                                    class="{{ $pattern == $backgrounds[0] ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-grad-{{ $pattern }} hover:border-black">
+                                    x-bind:class="(selected == '{{ $pattern }}') ? 'border-[#0f5490]' : 'border-[#e0edf3]'"
+                                    class="{{ $pattern == $backgrounds[0] ? 'order-first' : '' }} h-full flex-shrink-0 border-4 rounded-lg w-36 bg-grad-{{ $pattern }} hover:border-[#0f5490]">
                                     <div x-bind:class="(selected == '{{ $pattern }}') ? 'opacity-100' : 'opacity-0'"
                                         class="flex items-center justify-center w-full h-full">
                                         <x-fas-circle-check class="w-6 h-6" />
@@ -144,13 +144,13 @@
 
         <template is-modal="manageMember" class="bg-red-200">
             <div class="flex flex-col w-full gap-4 p-4">
-                <h1 class="text-3xl font-bold">Manage Members</h1>
+                <h1 class="text-3xl font-bold text-[#0a2436]">Manage Members</h1>
                 <hr>
                 <div class="flex flex-col gap-4">
                     <x-form.text label="Team member" name="member-name" icon="fas-search" />
 
                     <section
-                        class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-black h-80 rounded-xl">
+                        class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-[#0f5490] h-80 rounded-xl">
                         <div class="flex flex-wrap w-full max-w-[34rem] min-h-full gap-2">
 
                             @foreach ($members as $member)
@@ -177,7 +177,7 @@
 
         <template is-modal="inviteMember" class="bg-red-200">
             <div class="flex flex-col w-full gap-4 p-4">
-                <h1 class="text-3xl font-bold">Invite People</h1>
+                <h1 class="text-3xl font-bold text-[#0a2436]">Invite People</h1>
                 <hr>
                 <div class="flex flex-col gap-4">
                     <label for="input-text-inv-email">Enter email address</label>
@@ -190,7 +190,7 @@
                     </div>
 
                     <form method="POST" id="invite-members-form" action="{{ route('doInviteMembers', ['team_id' => $team->id]) }}"
-                        class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-black h-80 rounded-xl">
+                        class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-[#0f5490] h-80 rounded-xl">
                         @csrf
                         <input type="hidden" name="team_id", value="{{ $team->id }}">
                         <div class="flex flex-col w-full gap-2" id="invite-container">
@@ -241,13 +241,13 @@
     @endif
 
     <div class="flex flex-col w-full h-full overflow-auto">
-        <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-gray-200">
+        <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-[#e0edf3]">
             <div class="w-20 h-20">
                 @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
                     <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
                         class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
                         <div
-                            class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-black opacity-0 hover:opacity-70">
+                            class="flex flex-wrap items-center justify-center w-full h-full transition-all bg-[#0f5490] opacity-0 hover:opacity-70">
                             <x-fas-camera class="w-1/3 m-auto h-1/3" />
                         </div>
                     </x-avatar>
@@ -294,11 +294,11 @@
 
                         @foreach ($boards as $board)
                             <a href="{{ route('board', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}"
-                                class="flex cursor-pointer select-none flex-col transition duration-300 border border-gray-200 shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-grad-{{ $board->pattern }} overflow-hidden">
+                                class="flex cursor-pointer select-none flex-col transition duration-300 border border-[#e0edf3] shadow-xl rounded-xl h-32 w-72 hover:shadow-2xl bg-grad-{{ $board->pattern }} overflow-hidden">
                                 <div class="flex-grow w-full p-4">
 
                                 </div>
-                                <article class="flex flex-col w-full gap-1 px-4 py-2 bg-white border-t border-t-gray-200">
+                                <article class="flex flex-col w-full gap-1 px-4 py-2 bg-white border-t border-t-[#e0edf3]">
                                     <h3 class="overflow-hidden font-semibold truncate text-bold">{{ $board->name }}</h3>
                                 </article>
                             </a>
@@ -314,7 +314,7 @@
 
                 {{-- members list --}}
                 <div
-                    class="flex flex-col flex-grow w-full gap-2 p-4 overflow-x-hidden overflow-y-auto border-2 border-gray-200 rounded-xl">
+                    class="flex flex-col flex-grow w-full gap-2 p-4 overflow-x-hidden overflow-y-auto border-2 border-[#e0edf3] rounded-xl">
                     <div class="flex items-center gap-4">
                         <x-avatar name="{{ $owner->name }}" asset="{{ $owner->image_path }}"
                             class="!flex-shrink-0 !flex-grow-0 w-12" />
@@ -488,7 +488,7 @@
                         <p class="flex-grow overflow-hidden truncate">
                             ${email}
                         </p>
-                        <button onclick="DOM.find('#email-tag-${id}')?.remove()" type="button" class="flex items-center justify-center w-full gap-2 px-6 py-1 text-base font-bold border-4 border-black rounded-full bg-white text-black hover:bg-black hover:text-white !border-2 !text-sm w-min !px-4">
+                        <button onclick="DOM.find('#email-tag-${id}')?.remove()" type="button" class="flex items-center justify-center w-full gap-2 px-6 py-1 text-base font-bold border-4 border-[#0f5490] rounded-full bg-white text-[#fff] hover:bg-[#0f5490] hover:text-white !border-2 !text-sm w-min !px-4">
                                 <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
                         </button>
                     </div>

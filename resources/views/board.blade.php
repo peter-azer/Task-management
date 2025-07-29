@@ -18,8 +18,8 @@
                         class="!w-16 !h-16 !aspect-square !text-xl" />
                 </div>
                 <article class="flex flex-col gap-2 text-sm">
-                    <h2 class="font-bold">{{ $team->name }}</h2>
-                    <p class="text-sm line-clamp-3">
+                    <h2 class="max-w-full overflow-hidden font-bold truncate text-[#d0d7dd]">{{ $team->name }}</h2>
+                    <p class="text-sm line-clamp-3 text-[#d0d7dd]">
                         {{ $team->description }}
                     </p>
                 </article>
@@ -27,16 +27,16 @@
         </a>
 
         @if (Auth::user()->id == $owner->id)
-            <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
+            <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
                 <div data-role="menu-item" onclick="ModalView.show('updateBoard')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-pen class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
                     <p> Edit </p>
                 </div>
                 <hr class="w-full border">
                 <div data-role="menu-item" onclick="ModalView.show('deleteBoard')"
-                    class="flex items-center w-full gap-3 px-6 py-2 text-red-600 cursor-pointer select-none hover:bg-black hover:text-white">
-                    <x-fas-trash class="w-4 h-4" />
+                    class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                    <x-fas-trash class="w-4 h-4 text-[#2c8bc6]" />
                     <p>Delete</p>
                 </div>
             </section>
@@ -58,7 +58,7 @@
             <div onclick="ModalView.show('addCol')"
                 class="flex flex-col flex-shrink-0 gap-2 px-4 py-2 transition shadow-lg cursor-pointer select-none h-min w-72 rounded-xl bg-slate-100 hover:scale-105 hover:relative">
                 <div class="flex items-center justify-center gap-4 text-black">
-                    <x-fas-plus class="w-4 h-4" />
+                    <x-fas-plus class="w-4 h-4 text-[#2c8bc6]" />
                     <p>Add...</p>
                 </div>
             </div>
