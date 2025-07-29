@@ -16,15 +16,18 @@ class UserLogic
      *
      * @return User CreatedUSer
      */
-	public function insert(string $username, string $email, string $password, string $image_path = null) {
+    public function insert(string $username, string $email, string $password, string $image_path = null)
+    {
         $newUser = new User;
         $newUser->name = $username;
         $newUser->email = $email;
         $newUser->password = bcrypt($password);
         $newUser->image_path = $image_path;
         $newUser->save();
+
+        $newUser->assignRole('member'); // Assign default role
         return $newUser;
-	}
+    }
 
     public function getInitials(string $user_name)
     {
