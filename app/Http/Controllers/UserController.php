@@ -87,8 +87,8 @@ class UserController extends Controller
                     $oldCoverImagePath = str_replace(URL::to('/storage'), '', $user->image_path);
                     Storage::disk('public')->delete($oldCoverImagePath);
                 }
-                $coverImagePath = $request->file('image_path')->store('artworks', 'public');
-                $validatedData['image_path'] = URL::to(Storage::url($coverImagePath));
+                $coverImagePath = $request->file('image_path')->store('usersCoverImages', 'public');
+                $user->image_path = URL::to(Storage::url($coverImagePath));
             }
             if ($request->filled("password")) {
                 $user->password = bcrypt($request->password);
