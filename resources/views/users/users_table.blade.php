@@ -7,10 +7,10 @@
 @section('app-side')
 <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
 
-    <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
+    <section class="bg-[#0a2436] w-full overflow-hidden border border-transparent hover:border-[#2c8bc6] transition-all duration-200 cursor-pointer select-none rounded-xl">
         <div data-role="menu-item" onclick="ModalView.show('createUser')"
-            class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-            <x-fas-user-plus class="w-4 h-4" />
+            class="flex items-center w-full gap-3 px-6 py-2 text-white transition-all duration-200 hover:bg-[#123850] rounded-xl">
+            <x-fas-user-plus class="w-4 h-4 text-[#2c8bc6] transition-colors duration-200" />
             <p> Add User </p>
         </div>
     </section>

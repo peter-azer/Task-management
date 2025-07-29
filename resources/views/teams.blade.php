@@ -8,11 +8,12 @@
 <div class="flex flex-col gap-6 px-8 pl-4 mt-2">
 
     @can('create-team')
-    <section class="w-full overflow-hidden border-2 border-gray-200 cursor-pointer select-none rounded-xl">
-        <div data-role="menu-item" onclick="ModalView.show('createTeam')"
-            class="flex items-center w-full gap-3 px-6 py-2 text-black cursor-pointer select-none hover:bg-black hover:text-white">
-            <x-fas-cube class="w-4 h-4" />
-            <p> Add Team </p>
+    <section
+        class="bg-[#0a2436] w-full overflow-hidden border border-transparent hover:border-[#2c8bc6] transition-all duration-200 cursor-pointer select-none rounded-xl">
+        <div onclick="ModalView.show('createTeam')"
+            class="flex items-center w-full gap-3 px-6 py-2 text-white transition-all duration-200 hover:bg-[#123850] rounded-xl">
+            <x-fas-cube class="w-4 h-4 text-[#2c8bc6] transition-colors duration-200" />
+            <p class="transition-colors duration-200">Add Team</p>
         </div>
     </section>
     @endcan
@@ -115,7 +116,7 @@
                 value="{{ session('__old_team_name') }}" />
             <div class="h-full min-w-min">
                 <x-form.button type="submit" primary class="h-full">
-                    <x-fas-magnifying-glass class="w-4 h-4" />Search
+                    <x-fas-magnifying-glass class="w-4 h-4 text-[#2c8bc6]" />Search
                 </x-form.button>
             </div>
         </form>
@@ -148,7 +149,7 @@
 
     <section class="flex flex-col gap-6">
         <header>
-            <h2 class="ml-6 text-3xl font-bold">My Teams</h2>
+            <h2 class="ml-6 text-3xl font-bold text-[#0a2436]">My Teams</h2>
         </header>
 
         <hr>

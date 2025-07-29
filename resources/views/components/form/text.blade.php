@@ -3,11 +3,11 @@
 <div data-role="form-text"
     {{ $attributes->merge(['class' => 'flex flex-col items-center justify-center w-full gap-2']) }}>
     @isset($label)
-        <label for="input-text-{{ $name }}" class="w-full pl-6">{{ $label }}</label>
+    <label for="input-text-{{ $name }}" class="w-full pl-6">{{ $label }}</label>
     @endisset
-    <div class="flex items-center justify-center w-full gap-2 px-6 py-2 text-base border-2 border-black rounded-full">
+    <div class="flex items-center justify-center w-full gap-2 px-6 py-2 text-base border-2 border-[#0a2436] rounded-full">
         @isset($icon)
-            <div class="w-4 h-4">@svg($icon)</div>
+        <div class="w-4 h-4 text-[#2c8bc6]">@svg($icon)</div>
         @endisset
         <input type="text" class="flex-grow outline-none"
             @isset($placeholder) placeholder="{{ $placeholder }}" @endisset name="{{ $name }}"
