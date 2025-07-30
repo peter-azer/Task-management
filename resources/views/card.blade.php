@@ -86,7 +86,7 @@
                     </p>
                 </div>
             </article>
-            @if ($workers->contains(Auth::user()))
+            @if (Auth::user())
             <form class="flex items-end w-full gap-4 mt-3" rows="30" id="search-form"
                 action="{{ route('commentCard', ['team_id' => $team->id, 'board_id' => $board->id, 'card_id' => $card->id]) }}"
                 method="POST">
