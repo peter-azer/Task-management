@@ -210,7 +210,7 @@ class TeamController extends Controller
         return redirect()->back()->with("notif", ["Success\nInvite is accepted"]);
     }
 
-    public function rejectInvite($user_id, $team_id)
+    public function rejectInvite($team_id, $user_id)
     {
         $user_id = intval($user_id);
         $team_id = intval($team_id);
