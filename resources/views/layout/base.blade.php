@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     @vite('resources/js/app.js')
     @stack("head")
 </head>
+
 <body>
     <x-toast-manager></x-toast-manager>
     <x-modal-manager></x-modal-manager>
@@ -16,6 +18,16 @@
     @yield('body')
     @stack('component')
     @include("components.notification-script")
+    @push('page')
+    <script>
+        window.addEventListener('load', () => {
+            if (PageLoader?.close) {
+                PageLoader.close();
+            }
+        });
+    </script>
+    @endpush
     @stack('page')
 </body>
+
 </html>
