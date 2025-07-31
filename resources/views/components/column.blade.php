@@ -1,7 +1,7 @@
 @props(['teamid', 'isowner'])
 <div style="display: none">
 
-    @if (isset($isowner) && $isowner == true)
+    @if ((isset($isowner) && $isowner == true) || auth()->user()->can('manage-tasks'))
     <template is-modal="updateColumn">
         <div class="flex flex-col w-full gap-4 p-4">
             <form class="flex flex-col gap-4" method="POST">
