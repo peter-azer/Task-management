@@ -18,6 +18,7 @@
     @yield('body')
     @stack('component')
     @include("components.notification-script")
+    @stack('page')
     @push('page')
     <script>
         window.addEventListener('load', () => {
@@ -27,7 +28,6 @@
         });
     </script>
     @endpush
-    @stack('page')
 </body>
 
 </html>
