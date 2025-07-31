@@ -92,7 +92,7 @@
             const colHeader = this.ref.querySelector(":scope > header");
             colHeader.setAttribute('draggable', (id != null));
 
-            @if(isset($isowner) && $isowner == true)
+            @if((isset($isowner) && $isowner == true) || auth()->user()->can('manage-tasks'))
             this.ref.querySelector(":scope > header > #col-upd-btn").addEventListener("click", () => ModalView
                 .show("updateColumn", {
                     name: this.ref.dataset.name,
