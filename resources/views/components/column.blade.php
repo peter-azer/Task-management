@@ -31,7 +31,7 @@
             class="flex flex-col flex-shrink-0 max-h-full border-2 shadow-lg group h-min border-slate-50 w-72 rounded-xl bg-slate-100">
             <header class="flex items-center gap-2 px-4 py-2 select-none rounded-t-xl" draggable="true">
                 <h2 class="w-full overflow-hidden text-sm font-bold truncate"></h2>
-                @if (isset($isowner) && $isowner == true)
+                @if ((isset($isowner) && $isowner == true) || auth()->user()->can('manage-tasks'))
                 <div type="button" id="col-upd-btn"
                     class="p-2 text-gray-600 transition rounded-full opacity-0 bg-slate-200 hover:bg-slate-300 group-hover:opacity-100 ">
                     <x-fas-pen class="w-[12px] h-[12px]" />
