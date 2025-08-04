@@ -262,7 +262,7 @@
             {{-- page left section --}}
             <section class="flex flex-col flex-grow h-full gap-6">
 
-                <section class="flex flex-col gap-4">
+                <section class="flex flex-col gap-4 overflow-y-auto">
                     <header class="flex items-center gap-2 pl-1">
                         <h2 class="text-2xl font-bold">Boards</h2>
                     </header>
