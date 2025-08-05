@@ -326,7 +326,8 @@
                     </div>
 
                     @foreach ($members as $member)
-                        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+                        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin') || Auth::user()->id == $member->id)
+                            {{-- If the user is the owner or super-admin, make the member clickable --}}
                             <a href="{{ route('user.show', ['id' => $member->id]) }}" class="flex items-center gap-4">
                                 <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
                                     class="!flex-shrink-0 !flex-grow-0 w-12" />
