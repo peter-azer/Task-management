@@ -26,7 +26,7 @@
         </a>
 
         <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
-            @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
+            @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
                 <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
                     class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
                     <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
@@ -69,7 +69,7 @@
 @endsection
 
 @section('content')
-    @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
+    @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
         <template is-modal="changeProfile">
             <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">
                 <x-form.file name="picture" label="Choose Image" accept="image/png, image/jpeg, image/jpg" />
@@ -83,7 +83,8 @@
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl text-[#0a2436] font-bold">Edit Team</h1>
                 <hr>
-                <form action="{{ route('doTeamDataUpdate', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
+                <form action="{{ route('doTeamDataUpdate', ['team_id' => $team->id]) }}" method="POST"
+                    class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="team_name" label="Team's Name" value="{{ $team->name }}" required />
@@ -116,7 +117,8 @@
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl text-[#0a2436] font-bold">Create Board</h1>
                 <hr>
-                <form action="{{ route('createBoard', ['team_id' => $team->id]) }}" method="POST" class="flex flex-col gap-4">
+                <form action="{{ route('createBoard', ['team_id' => $team->id]) }}" method="POST"
+                    class="flex flex-col gap-4">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <x-form.text name="board_name" label="Board's Name" required />
@@ -189,7 +191,8 @@
                         </x-form.button>
                     </div>
 
-                    <form method="POST" id="invite-members-form" action="{{ route('doInviteMembers', ['team_id' => $team->id]) }}"
+                    <form method="POST" id="invite-members-form"
+                        action="{{ route('doInviteMembers', ['team_id' => $team->id]) }}"
                         class="flex justify-center w-full p-4 overflow-hidden overflow-y-auto border-2 border-[#0f5490] h-80 rounded-xl">
                         @csrf
                         <input type="hidden" name="team_id", value="{{ $team->id }}">
@@ -243,7 +246,7 @@
     <div class="flex flex-col w-full h-full overflow-auto">
         <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-[#e0edf3]">
             <div class="w-20 h-20">
-                @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
+                @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
                     <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
                         class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
                         <div
@@ -268,8 +271,8 @@
                     </header>
 
                     {{-- Search Bar --}}
-                    <form class="flex items-center w-full gap-4" id="search-form" action="{{ route('searchBoard', ['team_id' => $team->id]) }}"
-                        method="GET">
+                    <form class="flex items-center w-full gap-4" id="search-form"
+                        action="{{ route('searchBoard', ['team_id' => $team->id]) }}" method="GET">
                         @csrf
                         <input type="hidden" name="team_id" value="{{ $team->id }}">
                         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
@@ -323,13 +326,19 @@
                     </div>
 
                     @foreach ($members as $member)
-                    @if(Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
-                        <a href="{{route('user.show', ['id' => $member->id])}}" class="flex items-center gap-4">
-                            <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
-                                class="!flex-shrink-0 !flex-grow-0 w-12" />
-                            <p class="w-40 truncate">{{ $member->name }}</p>
-                        </a>
-                    @endif
+                        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+                            <a href="{{ route('user.show', ['id' => $member->id]) }}" class="flex items-center gap-4">
+                                <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
+                                    class="!flex-shrink-0 !flex-grow-0 w-12" />
+                                <p class="w-40 truncate">{{ $member->name }}</p>
+                            </a>
+                        @else
+                            <div class="flex items-center gap-4">
+                                <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"
+                                    class="!flex-shrink-0 !flex-grow-0 w-12" />
+                                <p class="w-40 truncate">{{ $member->name }}</p>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             </aside>
@@ -340,7 +349,7 @@
 
 @pushOnce('page')
     <script>
-        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole("super-admin"))
+        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
             ModalView.onShow('createBoard', (modal) => {
                 modal.querySelectorAll("form[action][method]").forEach(
                     form => form.addEventListener("submit", () => PageLoader.show())
@@ -392,10 +401,11 @@
                     try {
                         PageLoader.show();
                         const pfpBlobData = await getCropperImageBlob(imageEditor);
-                        let response = await ServerRequest.post("{{ route('doChangeTeamImage', ['team_id' => $team->id]) }}", {
-                            image: pfpBlobData,
-                            team_id: `{{ $team->id }}`
-                        });
+                        let response = await ServerRequest.post(
+                            "{{ route('doChangeTeamImage', ['team_id' => $team->id]) }}", {
+                                image: pfpBlobData,
+                                team_id: `{{ $team->id }}`
+                            });
                         location.reload();
                     } catch (error) {
                         PageLoader.close();
@@ -440,11 +450,12 @@
                         .map(card => card.dataset.email);
 
                     try {
-                        await ServerRequest.post("{{ route('deleteTeamMember', ['team_id' => $team->id]) }}", {
-                            team_id: `{{ $team->id }}`,
-                            user_id: `{{ Auth::user()->id }}`,
-                            emails: deleteEmailList,
-                        });
+                        await ServerRequest.post(
+                            "{{ route('deleteTeamMember', ['team_id' => $team->id]) }}", {
+                                team_id: `{{ $team->id }}`,
+                                user_id: `{{ Auth::user()->id }}`,
+                                emails: deleteEmailList,
+                            });
                         location.reload();
                     } catch (error) {
                         console.log(error);
