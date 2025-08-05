@@ -1,8 +1,8 @@
 <div id="modal-view" data-role="modal-manager-container"
-    class="fixed z-40 flex flex-wrap items-center justify-center w-screen h-screen overflow-hidden bg-[#0a2436] bg-opacity-50 backdrop-blur-sm"
+    class="fixed z-40 flex flex-wrap items-center justify-center w-screen h-screen overflow-y-auto bg-[#0a2436] bg-opacity-50 backdrop-blur-sm"
     style="display: none">
 
-    <div class="min-w-[40rem] max-w-[70%] max-h-[70%] flex flex-col bg-white rounded-xl overflow-hidden">
+    <div class="min-w-[40rem] max-w-[70%] max-h-[70%] flex flex-col bg-white rounded-xl overflow-y-auto">
         <header class="flex items-center justify-between flex-grow-0 w-full px-4 py-2 bg-[#0a2436]">
             <h1 class="text-2xl font-bold text-white" id="modal-title"></h1>
             <x-fas-square-xmark class="w-8 h-8 text-white" onclick="ModalView.close()" />
