@@ -71,187 +71,200 @@
 
 @pushOnce('component')
 <Script>
-    const columnTemplate = document.querySelector("template#column");
-    class Column {
-        constructor(board, id, name, cards = []) {
-            this.board = board;
-            const content = columnTemplate.content.cloneNode(true);
-            const node = document.createElement("div");
-            node.append(content);
+const columnTemplate = document.querySelector("template#column");
 
-            this.ref = node.children[0];
-            this.ref.querySelector("header > h2").textContent = name;
-            this.ref.dataset.id = id;
-            this.ref.dataset.name = name;
+class Column {
+    constructor(board, id, name, cards = []) {
+        this.board = board;
+        const content = columnTemplate.content.cloneNode(true);
+        const node = document.createElement("div");
+        node.append(content);
 
-            const btnAdd = this.ref.querySelector(":scope > button#btn-add");
-            const btnSubmit = this.ref.querySelector(":scope > form > button#btn-submit");
-            const formAdd = this.ref.querySelector(":scope > form");
-            const inputCard = this.ref.querySelector(":scope > form > textarea#card");
-            const cardContainer = this.ref.querySelector("#card-container");
-            const colHeader = this.ref.querySelector(":scope > header");
-            colHeader.setAttribute('draggable', (id != null));
+        this.ref = node.children[0];
+        this.ref.querySelector("header > h2").textContent = name;
+        this.ref.dataset.id = id;
+        this.ref.dataset.name = name;
 
-            @if((isset($isowner) && $isowner == true) || auth()->user()->can('manage-tasks'))
-            this.ref.querySelector(":scope > header > #col-upd-btn").addEventListener("click", () => ModalView
-                .show("updateColumn", {
-                    name: this.ref.dataset.name,
-                    id: this.ref.dataset.id
-                }));
-            this.ref.querySelector(":scope > header > #col-del-btn").addEventListener("click", () => ModalView
-                .show("deleteColumn", {
-                    name: this.ref.dataset.name,
-                    id: this.ref.dataset.id
-                }));
+        const btnAdd = this.ref.querySelector(":scope > button#btn-add");
+        const btnSubmit = this.ref.querySelector(":scope > form > button#btn-submit");
+        const formAdd = this.ref.querySelector(":scope > form");
+        const inputCard = this.ref.querySelector(":scope > form > textarea#card");
+        const cardContainer = this.ref.querySelector("#card-container");
+        const colHeader = this.ref.querySelector(":scope > header");
+        colHeader.setAttribute('draggable', (id != null));
 
-            ModalView.onShow("updateColumn", (modal, payload) => {
-                this.board.IS_EDITING = true;
-                const board_id = this.board.ref.dataset.id;
-                const form = modal.querySelector("form");
-                const inputTag = modal.querySelector("input#input-text-column_name");
-                const idTag = modal.querySelector("input#column_id");
-                inputTag.value = payload.name;
-                idTag.value = payload.id;
-                form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/update') }}`;
-                form.addEventListener("submit", () => PageLoader.show());
-            });
-            ModalView.onShow("deleteColumn", (modal, payload) => {
-                this.board.IS_EDITING = true;
-                const board_id = this.board.ref.dataset.id;
-                const form = modal.querySelector("form");
-                const idTag = modal.querySelector("input#column_id");
-                idTag.value = payload.id;
-                form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/delete') }}`;
-                form.addEventListener("submit", () => PageLoader.show());
-            });
+        @if((isset($isowner) && $isowner == true) || auth()->user()->can('manage-tasks'))
+        this.ref.querySelector(":scope > header > #col-upd-btn").addEventListener("click", () => ModalView
+            .show("updateColumn", {
+                name: this.ref.dataset.name,
+                id: this.ref.dataset.id
+            }));
+        this.ref.querySelector(":scope > header > #col-del-btn").addEventListener("click", () => ModalView
+            .show("deleteColumn", {
+                name: this.ref.dataset.name,
+                id: this.ref.dataset.id
+            }));
 
-            ModalView.onClose("updateColumn", () => {
+        ModalView.onShow("updateColumn", (modal, payload) => {
+            this.board.IS_EDITING = true;
+            const board_id = this.board.ref.dataset.id;
+            const form = modal.querySelector("form");
+            const inputTag = modal.querySelector("input#input-text-column_name");
+            const idTag = modal.querySelector("input#column_id");
+            inputTag.value = payload.name;
+            idTag.value = payload.id;
+            form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/update') }}`;
+            form.addEventListener("submit", () => PageLoader.show());
+        });
+
+        ModalView.onShow("deleteColumn", (modal, payload) => {
+            this.board.IS_EDITING = true;
+            const board_id = this.board.ref.dataset.id;
+            const form = modal.querySelector("form");
+            const idTag = modal.querySelector("input#column_id");
+            idTag.value = payload.id;
+            form.action = `{{ url('team/' . $teamid . '/board/${board_id}/column/delete') }}`;
+            form.addEventListener("submit", () => PageLoader.show());
+        });
+
+        ModalView.onClose("updateColumn", () => {
+            this.board.IS_EDITING = false;
+        });
+        ModalView.onClose("deleteColumn", () => {
+            this.board.IS_EDITING = false;
+        });
+        @endif
+
+        let oldLeftId = null;
+        let oldRightId = null;
+
+        colHeader.addEventListener('dragstart', () => {
+            this.board.IS_EDITING = true;
+            this.ref.classList.add("is-dragging");
+            this.ref.classList.add("opacity-50");
+
+            // Save the original left/right column ids
+            oldLeftId = this.ref.previousElementSibling?.dataset?.id || null;
+            oldRightId = this.ref.nextElementSibling?.dataset?.id || null;
+        });
+
+        colHeader.addEventListener('dragend', () => {
+            this.ref.classList.remove("is-dragging");
+            colHeader.setAttribute('draggable', false);
+            this.ref.classList.remove("opacity-50");
+
+            const board_id = this.board.ref.dataset.id;
+            const currentLeftId = this.ref.previousElementSibling?.dataset?.id || null;
+            const currentRightId = this.ref.nextElementSibling?.dataset?.id || null;
+
+            // Only proceed if the column changed its position
+            if (oldLeftId === currentLeftId && oldRightId === currentRightId) {
+                console.log("Column position unchanged. Skipping reorder request.");
+                colHeader.setAttribute('draggable', true);
                 this.board.IS_EDITING = false;
-            });
-            ModalView.onClose("deleteColumn", () => {
-                this.board.IS_EDITING = false;
-            });
-            @endif
-
-            colHeader.addEventListener('dragstart', () => {
-                this.board.IS_EDITING = true;
-                this.ref.classList.add("is-dragging");
-                this.ref.classList.add("opacity-50");
-            });
-
-            colHeader.addEventListener('dragend', () => {
-                this.ref.classList.remove("is-dragging");
-                colHeader.setAttribute('draggable', false);
-                this.ref.classList.remove("opacity-50");
-                const board_id = this.board.ref.dataset.id;
-
-                ServerRequest.post(`{{ url('team/' . $teamid . '/board/${board_id}/column/reorder') }}`, {
-                        middle_id: this.ref.dataset.id,
-                        right_id: this.ref.nextElementSibling?.dataset?.id || null,
-                        left_id: this.ref.previousElementSibling?.dataset?.id || null,
-                    })
-                    .then((response) => {
-                        this.board.IS_EDITING = false;
-                        colHeader.setAttribute('draggable', true);
-                        console.log(response.data);
-                    });
-            });
-
-            btnAdd.addEventListener("click", () => {
-                board.IS_EDITING = true;
-                btnAdd.style.display = "none";
-                formAdd.classList.remove("max-h-0");
-                inputCard.focus();
-            });
-
-            cardContainer.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                let currentDraggingCard = DOM.find("div[data-role='card'].is-dragging");
-                if (currentDraggingCard == null) return;
-                let closestBottomCardFromMouse = null;
-                let closestOffset = Number.NEGATIVE_INFINITY;
-                let staticCards = cardContainer.querySelectorAll(
-                    ":scope > div[data-role='card']:not(.is-dragging)");
-
-                //calculate closestTask
-                staticCards.forEach((card) => {
-                    let {
-                        top,
-                        bottom
-                    } = card.getBoundingClientRect();
-
-                    let offset = event.clientY - ((top + bottom) / 2);
-
-                    if (offset < 0 && offset > closestOffset) {
-                        closestOffset = offset;
-                        closestBottomCardFromMouse = card;
-                    }
-                });
-
-                if (closestBottomCardFromMouse) {
-                    cardContainer.insertBefore(
-                        currentDraggingCard,
-                        closestBottomCardFromMouse
-                    );
-                } else {
-                    cardContainer.appendChild(currentDraggingCard);
-                }
-
-            })
-
-            inputCard.addEventListener("blur", () => {
-                btnSubmit.click();
-            });
-
-            inputCard.addEventListener("keydown", (event) => {
-                if (event.key === "Enter")
-                    btnSubmit.click();
-            });
-
-            btnSubmit.addEventListener("click", (event) => {
-                event.preventDefault();
-                formAdd.classList.add("max-h-0");
-                btnAdd.style.display = "flex";
-                const cardValue = inputCard.value.trim();
-                inputCard.value = "";
-                if (cardValue === "") {
-                    board.IS_EDITING = false
-                    return;
-                };
-
-                // submit
-                const board_id = this.board.ref.dataset.id;
-                const column_id = this.ref.dataset.id;
-
-                const newCard = new Card(null, cardValue);
-                newCard.mountTo(this);
-                ServerRequest.post(
-                        `{{ url('team/' . $teamid . '/board/${board_id}/column/${column_id}/card') }}`, {
-                            name: cardValue
-                        })
-                    .then((response) => {
-                        console.log(response.data.name);
-                        newCard.setId(response.data.id);
-                        board.IS_EDITING = false;
-                    });
-            });
-
-            for (const cardData of cards) {
-                const card = new Card(cardData.id, cardData.name, cardData.members, cardData.start_date, cardData.end_date, cardData.is_done, this.board);
-                card.mountTo(this);
+                return;
             }
 
-        }
+            ServerRequest.post(`{{ url('team/' . $teamid . '/board/${board_id}/column/reorder') }}`, {
+                    middle_id: this.ref.dataset.id,
+                    right_id: currentRightId,
+                    left_id: currentLeftId,
+                })
+                .then((response) => {
+                    this.board.IS_EDITING = false;
+                    colHeader.setAttribute('draggable', true);
+                    console.log(response.data);
+                });
+        });
 
-        mountTo(board) {
-            this.board = board;
-            board.ref.append(this.ref);
-        }
+        btnAdd.addEventListener("click", () => {
+            board.IS_EDITING = true;
+            btnAdd.style.display = "none";
+            formAdd.classList.remove("max-h-0");
+            inputCard.focus();
+        });
 
-        setId(id) {
-            this.ref.dataset.id = id;
-        }
+        cardContainer.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            let currentDraggingCard = DOM.find("div[data-role='card'].is-dragging");
+            if (currentDraggingCard == null) return;
 
+            let closestBottomCardFromMouse = null;
+            let closestOffset = Number.NEGATIVE_INFINITY;
+            let staticCards = cardContainer.querySelectorAll(
+                ":scope > div[data-role='card']:not(.is-dragging)");
+
+            staticCards.forEach((card) => {
+                let { top, bottom } = card.getBoundingClientRect();
+                let offset = event.clientY - ((top + bottom) / 2);
+
+                if (offset < 0 && offset > closestOffset) {
+                    closestOffset = offset;
+                    closestBottomCardFromMouse = card;
+                }
+            });
+
+            if (closestBottomCardFromMouse) {
+                cardContainer.insertBefore(currentDraggingCard, closestBottomCardFromMouse);
+            } else {
+                cardContainer.appendChild(currentDraggingCard);
+            }
+        });
+
+        inputCard.addEventListener("blur", () => {
+            btnSubmit.click();
+        });
+
+        inputCard.addEventListener("keydown", (event) => {
+            if (event.key === "Enter")
+                btnSubmit.click();
+        });
+
+        btnSubmit.addEventListener("click", (event) => {
+            event.preventDefault();
+            formAdd.classList.add("max-h-0");
+            btnAdd.style.display = "flex";
+
+            const cardValue = inputCard.value.trim();
+            inputCard.value = "";
+
+            if (cardValue === "") {
+                board.IS_EDITING = false;
+                return;
+            }
+
+            const board_id = this.board.ref.dataset.id;
+            const column_id = this.ref.dataset.id;
+
+            const newCard = new Card(null, cardValue);
+            newCard.mountTo(this);
+
+            ServerRequest.post(
+                    `{{ url('team/' . $teamid . '/board/${board_id}/column/${column_id}/card') }}`, {
+                        name: cardValue
+                    })
+                .then((response) => {
+                    console.log(response.data.name);
+                    newCard.setId(response.data.id);
+                    board.IS_EDITING = false;
+                });
+        });
+
+        for (const cardData of cards) {
+            const card = new Card(cardData.id, cardData.name, cardData.members, cardData.start_date, cardData.end_date, cardData.is_done, this.board);
+            card.mountTo(this);
+        }
     }
+
+    mountTo(board) {
+        this.board = board;
+        board.ref.append(this.ref);
+    }
+
+    setId(id) {
+        this.ref.dataset.id = id;
+    }
+}
+
 </Script>
 @endPushOnce
