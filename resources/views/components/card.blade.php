@@ -18,6 +18,8 @@
             node.append(content);
             this.ref = node.children[0];
 
+            let originalColumn = null; // 👈 Store original column
+
             const now = new Date();
             const startDate = start_date ? new Date(start_date) : null;
             const endDate = end_date ? new Date(end_date) : null;
@@ -29,7 +31,6 @@
             let avatarsHtml = "";
 
             if (!hasDates) {
-                // Show plain white card with just the task name
                 avatarsHtml = `
                     <div class="mt-2 p-2 bg-white text-gray-600 rounded-md text-xs">
                         No dates assigned
@@ -52,7 +53,6 @@
 
                 avatarsHtml = `
                     <div class="p-4 rounded-lg shadow-md ${bgClass} ${textClass} space-y-3">
-                        <!-- Avatars -->
                         <div class="relative flex justify-start gap-3 items-center">
                             ${
                                 (members ?? []).map(m => {
@@ -68,8 +68,6 @@
                             }
                             <div class="absolute right-0 text-2xl">${statusText}</div> 
                         </div>
-
-                        <!-- Dates and Status -->
                         <div class="flex flex-wrap justify-center items-center text-xs gap-2">
                             <div>${formatDate(startDate)}</div>
                             <div>${formatDate(endDate)}</div>
@@ -99,6 +97,7 @@
                 this.board.IS_EDITING = true;
                 this.ref.classList.add("is-dragging");
                 this.ref.classList.toggle("!bg-gray-500");
+                originalColumn = this.ref.closest("div[data-role='column']"); // 👈 Save original column
             });
 
             this.ref.addEventListener("click", () => {
@@ -113,9 +112,29 @@
                 this.ref.classList.toggle("!bg-gray-500");
 
                 const board_id = this.board.ref.dataset.id;
+                const newColumn = this.ref.closest("div[data-role='column']");
+
+                const currentColId = newColumn?.dataset?.id;
+                const originalColId = originalColumn?.dataset?.id;
+
+                // ✅ If not dropped in a new column, do nothing and restore position
+                if (originalColId === currentColId) {
+                    // Move card to correct position manually
+                    const container = originalColumn.querySelector("section > div#card-container");
+                    const before = this.ref.previousElementSibling;
+                    if (before) {
+                        container.insertBefore(this.ref, before.nextSibling);
+                    } else {
+                        container.prepend(this.ref);
+                    }
+
+                    this.board.IS_EDITING = false;
+                    this.ref.setAttribute('draggable', true);
+                    return;
+                }
 
                 ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/card/reorder') }}`, {
-                    column_id: this.ref.closest("div[data-role='column']").dataset.id,
+                    column_id: currentColId,
                     middle_id: this.ref.dataset.id,
                     bottom_id: this.ref.nextElementSibling?.dataset?.id || null,
                     top_id: this.ref.previousElementSibling?.dataset?.id || null,
@@ -136,7 +155,6 @@
                     is_done: isChecked === true ? 1 : 0,
                 }).then(response => {
                     console.log("Task done status updated", response.data);
-                    // Optionally: refresh UI or update card styles here
                 }).catch(err => {
                     console.error("Error updating task status", err);
                 });
