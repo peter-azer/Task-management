@@ -29,7 +29,12 @@ class UserController extends Controller
     }
     public function show($id)
     {
-        $user = User::findOrFail($id)->load(['teams', 'cards']);
+        $user = User::with([
+            'teams',
+            'cards' => function ($query) {
+            $query->orderBy('is_done');
+            }
+        ])->findOrFail($id);
         return view("users.user_show", compact("user"));
     }
 
