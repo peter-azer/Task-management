@@ -74,8 +74,8 @@
                     <h2 class="text-2xl font-bold">{{ $card->name }}</h2>
                 </div>
                 <hr class="border">
-                <div class="w-full h-32 p-2 px-5 mt-1 rounded bg-slate-50">
-                    <p class="text-base line-clamp-4">
+                <div class="w-full h-auto p-2 px-5 mt-1 rounded bg-slate-50">
+                    <p class="text-base">
                         @if ($card->description)
                         {{ $card->description }}
                         @else
