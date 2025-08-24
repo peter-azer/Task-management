@@ -26,7 +26,7 @@
             </div>
         </a>
 
-        @if (Auth::user()->id == $owner->id)
+        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
             <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
                 <div data-role="menu-item" onclick="ModalView.show('updateBoard')"
                     class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
@@ -47,7 +47,7 @@
 
 @section('content')
     <x-card teamid="{{ $board->team_id }}"/>
-    <x-column teamid="{{ $board->team_id }}" :isowner="Auth::user()->id == $owner->id"/>
+    <x-column teamid="{{ $board->team_id }}" :isowner="Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')"/>
     <div id="board-background"
         class="w-full h-full min-h-full overflow-hidden overflow-x-scroll bg-grad-{{ $board->pattern }}">
         <section class="flex h-full min-w-full gap-4 p-4">
@@ -67,7 +67,7 @@
     </div>
 
     {{-- modal declaration --}}
-    @if (Auth::user()->id == $owner->id)
+    @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
         <template is-modal="updateBoard">
             <div class="flex flex-col w-full gap-4 p-4">
                 <h1 class="text-3xl font-bold">Edit Board</h1>
@@ -228,7 +228,7 @@
         }
 
         const board = new Board(@json($board));
-        @if (Auth::user()->id == $owner->id)
+        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
             ModalView.onShow('deleteBoard', (modal) => {
                 modal.querySelectorAll("form[action][method]").forEach(
                     form => form.addEventListener("submit", () => PageLoader.show())

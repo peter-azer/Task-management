@@ -46,7 +46,7 @@
         </div>
         @endcan
         @endif
-        @if (Auth::user()->id == $owner->id)
+        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
         <hr class="w-full border">
         <div data-role="menu-item" onclick="ModalView.show('deleteCard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
@@ -141,7 +141,7 @@
     </div>
 </div>
 
-@if (Auth::user()->id == $owner->id)
+@if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
 <template is-modal="deleteCard">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
         action="{{ route('deleteCard', ['team_id' => $team->id, 'board_id' => $board->id, 'card_id' => $card->id]) }}">
