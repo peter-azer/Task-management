@@ -18,7 +18,7 @@
             node.append(content);
             this.ref = node.children[0];
 
-            let originalColumn = null; // 👈 Store original column
+            let originalColumn = null;
 
             const now = new Date();
             const startDate = start_date ? new Date(start_date) : null;
@@ -26,7 +26,7 @@
             const isDone = is_done;
 
             const hasDates = startDate instanceof Date && !isNaN(startDate) &&
-                             endDate instanceof Date && !isNaN(endDate);
+                endDate instanceof Date && !isNaN(endDate);
 
             let avatarsHtml = "";
 
@@ -44,15 +44,18 @@
                 const textClass = isDone == 1 ? 'text-green-700' : isLate ? 'text-red-700' : 'text-yellow-700';
 
                 const formatDate = (date) => {
-                    const options = { month: 'short', day: 'numeric' };
-                    const timeString = date.getHours() || date.getMinutes()
-                        ? ` - ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                        : '';
+                    const options = {
+                        month: 'short',
+                        day: 'numeric'
+                    };
+                    const timeString = date.getHours() || date.getMinutes() ?
+                        ` - ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` :
+                        '';
                     return `${date.toLocaleDateString(undefined, options)}${timeString}`;
                 };
 
                 avatarsHtml = `
-                    <div class="p-4 rounded-lg shadow-md ${bgClass} ${textClass} space-y-3">
+                    <div class="py-4 rounded-lg space-y-3">
                         <div class="relative flex justify-start gap-3 items-center">
                             ${
                                 (members ?? []).map(m => {
@@ -66,9 +69,9 @@
                                         </div>`;
                                 }).join('')
                             }
-                            <div class="absolute right-0 text-2xl">${statusText}</div> 
+                            <div class="absolute right-0 text-xl">${statusText}</div> 
                         </div>
-                        <div class="flex flex-wrap justify-center items-center text-xs gap-2">
+                        <div class="flex flex-wrap justify-left items-center text-xs gap-2 px-4 py-2 ${bgClass} ${textClass}">
                             <div>${formatDate(startDate)}</div>
                             <div>${formatDate(endDate)}</div>
                         </div>
@@ -76,19 +79,66 @@
                 `;
             }
 
+            // Main card HTML
             this.ref.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <input 
-                        type="checkbox" 
-                        name="is_done"
-                        class="task-done-checkbox accent-green-600" 
-                        ${is_done == 1 ? "checked" : ""}
-                        onclick="event.stopPropagation()" 
-                    />
-                    <span class="font-medium">${name}</span>
+                <div class="relative p-2 hover:bg-gray-50 rounded-lg">
+                    <!-- Card Content -->
+                    <div class="flex items-center gap-2">
+                        <input 
+                            type="checkbox" 
+                            name="is_done"
+                            class="task-done-checkbox accent-green-600" 
+                            ${is_done == 1 ? "checked" : ""}
+                            onclick="event.stopPropagation()" 
+                        />
+                        <span class="font-medium">${name}</span>
+                    </div>
+                    ${avatarsHtml}
                 </div>
-                ${avatarsHtml}
             `;
+
+            // === Action buttons per card ===
+            const actions = document.createElement("div");
+            actions.className = "absolute top-2 right-2 flex gap-2 opacity-0 transition";
+            actions.setAttribute("id", `card-actions-${id}`);
+            actions.innerHTML = `
+                <button 
+                    class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white"
+                    title="Edit"
+                >✏️</button>
+                <button 
+                    class="p-1 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white"
+                    title="Delete"
+                >🗑️</button>
+
+                
+            `;
+
+            actions.querySelectorAll("button").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    if (btn.title === "Edit") {
+                        console.log("Edit card", id);
+                        // ModalView.show('editCard', { id })
+                    } else {
+                        console.log("Delete card", id);
+                        // ModalView.show('deleteCard', { id })
+                    }
+                });
+            });
+
+            // Append actions to this card only
+            this.ref.querySelector("div.relative").append(actions);
+
+            // === Independent hover handling per card ===
+            this.ref.addEventListener("mouseenter", () => {
+                actions.classList.remove("opacity-0");
+                actions.classList.add("opacity-100");
+            });
+            this.ref.addEventListener("mouseleave", () => {
+                actions.classList.remove("opacity-100");
+                actions.classList.add("opacity-0");
+            });
 
             this.ref.dataset.id = id;
             this.ref.setAttribute('draggable', (id != null));
@@ -97,7 +147,7 @@
                 this.board.IS_EDITING = true;
                 this.ref.classList.add("is-dragging");
                 this.ref.classList.toggle("!bg-gray-500");
-                originalColumn = this.ref.closest("div[data-role='column']"); // 👈 Save original column
+                originalColumn = this.ref.closest("div[data-role='column']");
             });
 
             this.ref.addEventListener("click", () => {
@@ -117,9 +167,7 @@
                 const currentColId = newColumn?.dataset?.id;
                 const originalColId = originalColumn?.dataset?.id;
 
-                // ✅ If not dropped in a new column, do nothing and restore position
                 if (originalColId === currentColId) {
-                    // Move card to correct position manually
                     const container = originalColumn.querySelector("section > div#card-container");
                     const before = this.ref.previousElementSibling;
                     if (before) {
