@@ -75,15 +75,15 @@
                 </div>
                 <hr class="border">
                 <div class="w-full h-auto p-2 px-5 mt-1 rounded bg-slate-50">
-                    <p class="text-base">
+                    <div class="text-base text-left" style="white-space: pre-line;">
                         @if ($card->description)
                         {{ $card->description }}
                         @else
-                    <div class="flex items-center justify-center w-full h-full text-gray-500">
-                        - no description -
+                        <div class="flex items-center justify-center w-full h-full text-gray-500">
+                            - no description -
+                        </div>
+                        @endif
                     </div>
-                    @endif
-                    </p>
                 </div>
             </article>
             @if (Auth::user())
@@ -240,7 +240,7 @@
         );
     });
 
-    @if(Auth::user() -> id == $owner -> id)
+    @if(Auth::user()->id == $owner->id)
     ModalView.onShow('deleteCard', (modal) => {
         modal.querySelectorAll("form[action][method]").forEach(
             form => form.addEventListener("submit", () => PageLoader.show())
