@@ -228,7 +228,7 @@
                 const card_id = this.ref.dataset.id;
 
                 ServerRequest.post(`{{ url('team/'.$teamid.'/board') }}/${board_id}/card/${card_id}/done`, {
-                    is_done: isChecked ? 1 : 0,
+                    is_done: isChecked ? true : false,
                 }).catch(err => {
                     console.error("Error updating task status", err);
                 });
