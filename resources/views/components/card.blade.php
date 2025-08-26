@@ -90,9 +90,10 @@
                 `;
             } else {
                 const isLate = (now > endDate) && !this.is_done;
-                const statusText = this.is_done == 1 ? '✅' : (isLate ? '⛔' : '⏳');
-                const bgClass = this.is_done == 1 ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
-                const textClass = this.is_done == 1 ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
+                console.log(this.is_done);
+                const statusText = this.is_done == true ? '✅' : (isLate ? '⛔' : '⏳');
+                const bgClass = this.is_done == true ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
+                const textClass = this.is_done == true ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
 
                 const pretty = (d) => {
                     const opts = {
@@ -275,19 +276,19 @@
 
         openAssignModal() {
             const board_id = this.board.ref.dataset.id;
-            
+
             // Store current card reference for modal access
             window.currentCard = this;
-            
+
             // Open assign task modal
             ModalView.show('assignTask');
-            
+
             // Wait for forms to be mounted into DOM, then set the actions
             waitForElement("[data-role='assign-task-form']", 5000)
                 .then((assignForm) => {
                     // Build the assign task URL
                     assignForm.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/assignTask`;
-                    
+
                     // Reset assign form state
                     const assignSelect = assignForm.querySelector('select[name="id"]');
                     if (assignSelect) assignSelect.value = '';
@@ -298,22 +299,22 @@
                         ToastView.notif('Error', 'Failed to load assign form');
                     }
                 });
-                
+
             waitForElement("[data-role='unassign-task-form']", 5000)
                 .then((unassignForm) => {
                     // Build the unassign task URL
                     unassignForm.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/unassignTask`;
-                    
+
                     // Reset unassign form state and populate with current members
                     const unassignSelect = unassignForm.querySelector('select[name="id"]');
                     if (unassignSelect) {
                         unassignSelect.value = '';
-                        
+
                         // Clear existing options except the first one
                         while (unassignSelect.children.length > 1) {
                             unassignSelect.removeChild(unassignSelect.lastChild);
                         }
-                        
+
                         // Populate with current card members
                         if (this.members && this.members.length > 0) {
                             this.members.forEach(member => {
@@ -342,7 +343,7 @@
         renderActionButtons() {
             const isOwnerOrAdmin = @json(isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')));
             if (!isOwnerOrAdmin) return '';
-            
+
             return `
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-green-500 hover:text-white" title="Assign/Unassign Member" data-action="assign">👥</button>
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white" title="Edit" data-action="edit">✏️</button>
@@ -353,10 +354,10 @@
 
         openDeleteModal() {
             const board_id = this.board.ref.dataset.id;
-            
+
             // Open delete card modal
             ModalView.show('deleteCard');
-            
+
             // Wait for form to be mounted into DOM, then set the action
             waitForElement("[data-role='delete-card-form']", 5000)
                 .then((form) => {
@@ -408,7 +409,7 @@
 <template is-modal="assignTask">
     <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4">
         <p class="mb-6 text-lg text-center">Manage Task Assignment</p>
-        
+
         {{-- Assign Form --}}
         <form class="flex flex-col items-center justify-center w-full gap-6" method="POST" data-role="assign-task-form">
             @csrf
@@ -416,18 +417,18 @@
             <select name="id" id="assign_member_id" class="w-full p-2 border-2 border-gray-200 rounded" required>
                 <option value="">Select a team member to assign</option>
                 @if(isset($teamMembers) && count($teamMembers) > 0)
-                    @foreach ($teamMembers as $member)
-                        <option value="{{ $member->id }}">{{ $member->name }}</option>
-                    @endforeach
+                @foreach ($teamMembers as $member)
+                <option value="{{ $member->id }}">{{ $member->name }}</option>
+                @endforeach
                 @else
-                    <option value="" disabled>No team members available</option>
+                <option value="" disabled>No team members available</option>
                 @endif
             </select>
             <x-form.button type="submit" class="w-full">Assign Member</x-form.button>
         </form>
-        
+
         <hr class="w-full border-gray-300">
-        
+
         {{-- Unassign Form --}}
         <form class="flex flex-col items-center justify-center w-full gap-6" method="POST" data-role="unassign-task-form">
             @csrf
@@ -438,7 +439,7 @@
             </select>
             <x-form.button type="submit" class="w-full bg-orange-500 hover:bg-orange-600">Unassign Member</x-form.button>
         </form>
-        
+
         <x-form.button type="button" action="ModalView.close()" class="w-full">Cancel</x-form.button>
     </div>
 </template>
@@ -458,13 +459,13 @@
                     })
                 );
             });
-            
+
             // Assign task modal
             ModalView.onShow('assignTask', (modal) => {
                 // Get the card ID from the currently clicked card
                 const cardElement = document.querySelector('.is-dragging') || document.querySelector('[data-role="card"]:hover');
                 let currentCardMembers = [];
-                
+
                 if (cardElement) {
                     const cardId = cardElement.dataset.id;
                     // Find the card object to get its members
@@ -481,7 +482,7 @@
                         });
                     }
                 }
-                
+
                 // Populate unassign dropdown with assigned members when modal opens
                 const unassignSelect = modal.querySelector('select[name="id"]#unassign_member_id');
                 if (unassignSelect) {
@@ -489,7 +490,7 @@
                     while (unassignSelect.children.length > 1) {
                         unassignSelect.removeChild(unassignSelect.lastChild);
                     }
-                    
+
                     // Populate with only assigned members
                     if (currentCardMembers && currentCardMembers.length > 0) {
                         currentCardMembers.forEach(member => {
@@ -506,7 +507,7 @@
                         unassignSelect.appendChild(option);
                     }
                 }
-                
+
                 // Handle assign form submission
                 modal.querySelectorAll("form[data-role='assign-task-form']").forEach(
                     form => {
@@ -525,7 +526,7 @@
                         });
                     }
                 );
-                
+
                 // Handle unassign form submission
                 modal.querySelectorAll("form[data-role='unassign-task-form']").forEach(
                     form => {
