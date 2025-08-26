@@ -62,7 +62,7 @@
             this.members = members ?? [];
             this.start_date = start_date ?? null;
             this.end_date = end_date ?? null;
-            this.is_done = is_done;
+            this.is_done = true;
             this.board = board;
             this.description = description ?? "";
 
@@ -341,7 +341,7 @@
         }
 
         renderActionButtons() {
-            const isOwnerOrAdmin = @json(isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')));
+            const isOwnerOrAdmin = @json(isset($owner) && (Auth::user() -> id == $owner -> id || Auth::user() -> hasRole('super-admin')));
             if (!isOwnerOrAdmin) return '';
 
             return `
