@@ -143,7 +143,7 @@
                             type="checkbox" 
                             name="is_done"
                             class="task-done-checkbox accent-green-600" 
-                            ${this.is_done ? "checked" : ""}
+                            ${this.is_done || this.is_done == 1 || this.is_done == true ? "checked" : ""}
                             onclick="event.stopPropagation()" 
                         />
                         <span class="font-medium">${this.name}</span>
