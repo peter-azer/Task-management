@@ -91,9 +91,9 @@
             } else {
                 const isLate = (now > endDate) && !this.is_done;
                 console.log(this.is_done);
-                const statusText = this.is_done == true ? '✅' : (isLate ? '⛔' : '⏳');
-                const bgClass = this.is_done == true ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
-                const textClass = this.is_done == true ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
+                const statusText = this.is_done == true ? '✅' : (isLate == true ? '⛔' : '⏳');
+                const bgClass = this.is_done == true ? 'bg-green-100' : (isLate == true  ? 'bg-red-100' : 'bg-yellow-100');
+                const textClass = this.is_done == true ? 'text-green-700' : (isLate == true  ? 'text-red-700' : 'text-yellow-700');
 
                 const pretty = (d) => {
                     const opts = {
@@ -228,7 +228,7 @@
                 const card_id = this.ref.dataset.id;
 
                 ServerRequest.post(`{{ url('team/'.$teamid.'/board') }}/${board_id}/card/${card_id}/done`, {
-                    is_done: isChecked ? true : false,
+                    is_done: isChecked ? 1 : 0,
                 }).catch(err => {
                     console.error("Error updating task status", err);
                 });
