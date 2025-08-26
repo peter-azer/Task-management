@@ -90,6 +90,7 @@
                 `;
             } else {
                 const isLate = (now > endDate) && !this.is_done;
+                console.log("is_done", this.is_done, "is_late", isLate);
                 const statusText = this.is_done || this.is_done == 1 || this.is_done == true ? '✅' : (isLate ? '⛔' : '⏳');
                 const bgClass = this.is_done || this.is_done == 1 || this.is_done == true ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
                 const textClass = this.is_done || this.is_done == 1 || this.is_done == true ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
