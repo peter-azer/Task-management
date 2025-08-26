@@ -152,9 +152,7 @@
 
                     <!-- hover action buttons -->
                     <div class="absolute top-2 right-2 flex gap-2 opacity-0 transition" data-role="card-actions">
-                        <button class="p-1 rounded-full bg-gray-200 hover:bg-green-500 hover:text-white" title="Assign to Member" data-action="assign">👥</button>
-                        <button class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white" title="Edit" data-action="edit">✏️</button>
-                        <button class="p-1 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white" title="Delete" data-action="delete">🗑️</button>
+                        ${this.renderActionButtons()}
                     </div>
                 </div>
             `;
@@ -278,18 +276,21 @@
         openAssignModal() {
             const board_id = this.board.ref.dataset.id;
             
+            // Store current card reference for modal access
+            window.currentCard = this;
+            
             // Open assign task modal
             ModalView.show('assignTask');
             
-            // Wait for form to be mounted into DOM, then set the action
+            // Wait for forms to be mounted into DOM, then set the actions
             waitForElement("[data-role='assign-task-form']", 5000)
-                .then((form) => {
+                .then((assignForm) => {
                     // Build the assign task URL
-                    form.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/assignTask`;
+                    assignForm.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/assignTask`;
                     
-                    // Reset form state
-                    const selectElement = form.querySelector('select[name="id"]');
-                    if (selectElement) selectElement.value = '';
+                    // Reset assign form state
+                    const assignSelect = assignForm.querySelector('select[name="id"]');
+                    if (assignSelect) assignSelect.value = '';
                 })
                 .catch((err) => {
                     console.error("Assign modal form not found:", err);
@@ -297,7 +298,58 @@
                         ToastView.notif('Error', 'Failed to load assign form');
                     }
                 });
+                
+            waitForElement("[data-role='unassign-task-form']", 5000)
+                .then((unassignForm) => {
+                    // Build the unassign task URL
+                    unassignForm.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/unassignTask`;
+                    
+                    // Reset unassign form state and populate with current members
+                    const unassignSelect = unassignForm.querySelector('select[name="id"]');
+                    if (unassignSelect) {
+                        unassignSelect.value = '';
+                        
+                        // Clear existing options except the first one
+                        while (unassignSelect.children.length > 1) {
+                            unassignSelect.removeChild(unassignSelect.lastChild);
+                        }
+                        
+                        // Populate with current card members
+                        if (this.members && this.members.length > 0) {
+                            this.members.forEach(member => {
+                                const option = document.createElement('option');
+                                option.value = member.id;
+                                option.textContent = member.name;
+                                unassignSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No members assigned to this task';
+                            option.disabled = true;
+                            unassignSelect.appendChild(option);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.error("Unassign modal form not found:", err);
+                    if (typeof ToastView !== 'undefined') {
+                        ToastView.notif('Error', 'Failed to load unassign form');
+                    }
+                });
         }
+
+        renderActionButtons() {
+            const isOwnerOrAdmin = @json(isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')));
+            if (!isOwnerOrAdmin) return '';
+            
+            return `
+                <button class="p-1 rounded-full bg-gray-200 hover:bg-green-500 hover:text-white" title="Assign/Unassign Member" data-action="assign">👥</button>
+                <button class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white" title="Edit" data-action="edit">✏️</button>
+                <button class="p-1 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white" title="Delete" data-action="delete">🗑️</button>
+            `;
+        }
+
 
         openDeleteModal() {
             const board_id = this.board.ref.dataset.id;
@@ -351,29 +403,46 @@
 </template>
 @endif
 
-{{-- Assign Task Modal Template --}}
-@can("manage-tasks")
+{{-- Assign/Unassign Task Modal Template --}}
+@if (isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')))
 <template is-modal="assignTask">
-    <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST" data-role="assign-task-form">
-        @csrf
-        <p class="mb-6 text-lg text-center">Assign this task to member</p>
-        <select name="id" id="assign_member_id" class="w-full p-2 border-2 border-gray-200 rounded" required>
-            <option value="">Select a team member</option>
-            @if(isset($teamMembers) && count($teamMembers) > 0)
-                @foreach ($teamMembers as $member)
-                    <option value="{{ $member->id }}">{{ $member->name }}</option>
-                @endforeach
-            @else
-                <option value="" disabled>No team members available</option>
-            @endif
-        </select>
-        <div class="flex gap-6">
-            <x-form.button type="submit">Assign</x-form.button>
-            <x-form.button type="button" action="ModalView.close()">Cancel</x-form.button>
-        </div>
-    </form>
+    <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4">
+        <p class="mb-6 text-lg text-center">Manage Task Assignment</p>
+        
+        {{-- Assign Form --}}
+        <form class="flex flex-col items-center justify-center w-full gap-6" method="POST" data-role="assign-task-form">
+            @csrf
+            <p class="text-md text-center">Assign member to task</p>
+            <select name="id" id="assign_member_id" class="w-full p-2 border-2 border-gray-200 rounded" required>
+                <option value="">Select a team member to assign</option>
+                @if(isset($teamMembers) && count($teamMembers) > 0)
+                    @foreach ($teamMembers as $member)
+                        <option value="{{ $member->id }}">{{ $member->name }}</option>
+                    @endforeach
+                @else
+                    <option value="" disabled>No team members available</option>
+                @endif
+            </select>
+            <x-form.button type="submit" class="w-full">Assign Member</x-form.button>
+        </form>
+        
+        <hr class="w-full border-gray-300">
+        
+        {{-- Unassign Form --}}
+        <form class="flex flex-col items-center justify-center w-full gap-6" method="POST" data-role="unassign-task-form">
+            @csrf
+            <p class="text-md text-center">Remove member from task</p>
+            <select name="id" id="unassign_member_id" class="w-full p-2 border-2 border-gray-200 rounded" required>
+                <option value="">Select assigned member to remove</option>
+                {{-- This will be populated dynamically with assigned members --}}
+            </select>
+            <x-form.button type="submit" class="w-full bg-orange-500 hover:bg-orange-600">Unassign Member</x-form.button>
+        </form>
+        
+        <x-form.button type="button" action="ModalView.close()" class="w-full">Cancel</x-form.button>
+    </div>
 </template>
-@endcan
+@endif
 
 <script>
     // Add event listeners for modals
@@ -392,6 +461,53 @@
             
             // Assign task modal
             ModalView.onShow('assignTask', (modal) => {
+                // Get the card ID from the currently clicked card
+                const cardElement = document.querySelector('.is-dragging') || document.querySelector('[data-role="card"]:hover');
+                let currentCardMembers = [];
+                
+                if (cardElement) {
+                    const cardId = cardElement.dataset.id;
+                    // Find the card object to get its members
+                    const board = window.board || {};
+                    if (board.columnList) {
+                        board.columnList.forEach(column => {
+                            if (column.cardList) {
+                                column.cardList.forEach(card => {
+                                    if (card.id == cardId) {
+                                        currentCardMembers = card.members || [];
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                
+                // Populate unassign dropdown with assigned members when modal opens
+                const unassignSelect = modal.querySelector('select[name="id"]#unassign_member_id');
+                if (unassignSelect) {
+                    // Clear existing options except the first one
+                    while (unassignSelect.children.length > 1) {
+                        unassignSelect.removeChild(unassignSelect.lastChild);
+                    }
+                    
+                    // Populate with only assigned members
+                    if (currentCardMembers && currentCardMembers.length > 0) {
+                        currentCardMembers.forEach(member => {
+                            const option = document.createElement('option');
+                            option.value = member.id;
+                            option.textContent = member.name;
+                            unassignSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No members assigned to this task';
+                        option.disabled = true;
+                        unassignSelect.appendChild(option);
+                    }
+                }
+                
+                // Handle assign form submission
                 modal.querySelectorAll("form[data-role='assign-task-form']").forEach(
                     form => {
                         form.addEventListener("submit", (e) => {
@@ -399,7 +515,26 @@
                             if (!selectElement || !selectElement.value) {
                                 e.preventDefault();
                                 if (typeof ToastView !== 'undefined') {
-                                    ToastView.notif('Warning', 'Please select a team member');
+                                    ToastView.notif('Warning', 'Please select a team member to assign');
+                                }
+                                return false;
+                            }
+                            if (typeof PageLoader !== 'undefined') {
+                                PageLoader.show();
+                            }
+                        });
+                    }
+                );
+                
+                // Handle unassign form submission
+                modal.querySelectorAll("form[data-role='unassign-task-form']").forEach(
+                    form => {
+                        form.addEventListener("submit", (e) => {
+                            const selectElement = form.querySelector('select[name="id"]');
+                            if (!selectElement || !selectElement.value) {
+                                e.preventDefault();
+                                if (typeof ToastView !== 'undefined') {
+                                    ToastView.notif('Warning', 'Please select a member to unassign');
                                 }
                                 return false;
                             }
