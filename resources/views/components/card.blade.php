@@ -62,7 +62,7 @@
             this.members = members ?? [];
             this.start_date = start_date ?? null;
             this.end_date = end_date ?? null;
-            this.is_done = (is_done === 1 || is_done === true);
+            this.is_done = (is_done == 1 || is_done === true);
             this.board = board;
             this.description = description ?? "";
 
