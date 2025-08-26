@@ -49,7 +49,7 @@
             let formData = jsonToFormData(data);
             formData.append('_token', `{{ csrf_token() }}`);
             return new Promise((resolve, reject) => {
-                axios.post(url, data, this.config)
+                axios.post(url, formData, this.config)
                     .then(response => {
                         resolve(response);
                     })
