@@ -90,10 +90,9 @@
                 `;
             } else {
                 const isLate = (now > endDate) && !this.is_done;
-                console.log(this.is_done);
-                const statusText = this.is_done == true ? '✅' : (isLate == true ? '⛔' : '⏳');
-                const bgClass = this.is_done == true ? 'bg-green-100' : (isLate == true  ? 'bg-red-100' : 'bg-yellow-100');
-                const textClass = this.is_done == true ? 'text-green-700' : (isLate == true  ? 'text-red-700' : 'text-yellow-700');
+                const statusText = this.is_done ? '✅' : (isLate ? '⛔' : '⏳');
+                const bgClass = this.is_done ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
+                const textClass = this.is_done ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
 
                 const pretty = (d) => {
                     const opts = {
