@@ -90,9 +90,9 @@
                 `;
             } else {
                 const isLate = (now > endDate) && !this.is_done;
-                const statusText = this.is_done ? '✅' : (isLate ? '⛔' : '⏳');
-                const bgClass = this.is_done ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
-                const textClass = this.is_done ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
+                const statusText = this.is_done || this.is_done == 1 || this.is_done == true ? '✅' : (isLate ? '⛔' : '⏳');
+                const bgClass = this.is_done || this.is_done == 1 || this.is_done == true ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
+                const textClass = this.is_done || this.is_done == 1 || this.is_done == true ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
 
                 const pretty = (d) => {
                     const opts = {
