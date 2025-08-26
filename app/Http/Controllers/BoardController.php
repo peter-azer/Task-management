@@ -66,11 +66,13 @@ class BoardController extends Controller
         $board = $this->boardLogic->getData($board_id);
         $team = Team::find($board->team_id);
         $teamOwner = $this->teamLogic->getTeamOwner($board->team_id);
+        $teamMembers = $this->teamLogic->getTeamMember($board->team_id);
 
         return view("board")
             ->with("team", $team)
             ->with("owner", $teamOwner)
             ->with("board", $board)
+            ->with("team_members", $teamMembers)
             ->with("patterns", BoardLogic::PATTERN);
     }
 
