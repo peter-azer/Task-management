@@ -36,6 +36,7 @@ Route::middleware(["auth", "auth.session"])->get("user/edit/{id}", [UserControll
 Route::middleware(["auth", "auth.session"])->put("user/update/{id}", [UserController::class, "update"])->name("user.update");
 Route::middleware(["auth", "auth.session"])->get("user/show/{id}", [UserController::class, "show"])->name("user.show");
 Route::middleware(["auth", "auth.session"])->post("user/store", [UserController::class, "store"])->name("user.store");
+Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserController::class, "showCalendar"])->name("user.calendar");
 
 Route::middleware(["auth", "auth.session", "userInTeam"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
