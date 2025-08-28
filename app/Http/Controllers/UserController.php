@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Logic\FileLogic;
 use App\Models\User;
+use App\Models\UserTeam;
+use App\Models\Card;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
@@ -32,11 +34,57 @@ class UserController extends Controller
         $user = User::with([
             'teams',
             'cards' => function ($query) {
-            $query->orderBy('is_done');
+                $query->orderBy('is_done');
             }
         ])->findOrFail($id);
         return view("users.user_show", compact("user"));
     }
+    public function showCalendar()
+    {
+        $user = auth()->user();
+
+        if ($user->hasRole('super-admin')) {
+            // Super admin sees all tasks
+            $tasks = Card::all();
+        } elseif ($user->hasRole('admin')) {
+            // Admin sees tasks from teams they own
+            $teamIds = $user->teamRelations()
+                ->where('status', 'Owner')
+                ->pluck('team_id');
+
+            $tasks = Card::whereHas('column.board', function ($query) use ($teamIds) {
+                $query->whereIn('team_id', $teamIds);
+            })->orWhereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
+        } else {
+            // Regular users see their own tasks and team tasks
+            $teamIds = $user->teams()->pluck('teams.id');
+
+            $tasks = Card::whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
+        }
+
+        // Convert to calendar events
+        $userTasks = $tasks->load(['column.board.team'])->map(function ($task) {
+            return [
+                'id'    => $task->id,
+                'title' => $task->name ?? 'No Title',
+                'start' => $task->start_date ?? $task->created_at->toDateString(),
+                'end' => $task->end_date ?? $task->created_at,
+                'status' => $task->is_done,
+                'url'   => route('viewCard', [
+                    'team_id' => $task->column->board->team->id,
+                    'board_id' => $task->column->board_id,
+                    'card_id' => $task->id
+                ]),
+            ];
+        });
+
+        return view("task_calendar", compact("userTasks"));
+    }
+
 
     public function store(Request $request)
     {

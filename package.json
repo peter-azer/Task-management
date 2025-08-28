@@ -6,6 +6,8 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@event-calendar/core": "^4.5.2",
+        "@event-calendar/day-grid": "^3.12.0",
         "autoprefixer": "^10.4.14",
         "axios": "^1.1.2",
         "laravel-vite-plugin": "^0.7.5",
@@ -15,6 +17,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.12.1",
-        "croppie": "^2.6.5"
+        "croppie": "^2.6.5",
+        "fullcalendar": "^6.1.19"
     }
 }
