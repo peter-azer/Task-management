@@ -12,6 +12,7 @@ use App\Models\UserTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\TeamInvitation;
 use Illuminate\Http\Response as HttpResponse;
 
 class TeamController extends Controller
@@ -259,6 +260,8 @@ class TeamController extends Controller
                 "team_id" => $team_id,
                 "status" => "Pending"
             ]);
+
+            $user->notify(new TeamInvitation($team_id));
         }
 
         return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
