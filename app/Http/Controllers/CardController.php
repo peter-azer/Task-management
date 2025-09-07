@@ -8,6 +8,7 @@ use App\Models\Board;
 use App\Models\Card;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\AssignTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -58,6 +59,9 @@ class CardController extends Controller
         
         $this->cardLogic->addUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Joined card.");
+
+        $task = Card::findOrFail($card_id);
+        $user->notify(new AssignTask($task, $team_id, $board_id));
         return redirect()->back()->with("notif", ["Success\nAdded {$user->name} to the card"]);
     }
 

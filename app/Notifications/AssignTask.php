@@ -7,25 +7,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TeamInvitation extends Notification
+class AssignTask extends Notification
 {
     use Queueable;
 
-    /**
-     * The team instance.
-     *
-     * @var mixed
-     */
-    protected $team;
-
+    protected $task;
+    protected $team_id;
+    protected $board_id;
     /**
      * Create a new notification instance.
-     *
-     * @param mixed $team
      */
-    public function __construct($team)
+    public function __construct($task, $team_id, $board_id)
     {
-        $this->team = $team;
+        $this->task = $task;
+        $this->team_id = $team_id;
+        $this->board_id = $board_id;
     }
 
     /**
@@ -43,14 +39,13 @@ class TeamInvitation extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // dd($notifiable, $this->team);
         return (new MailMessage)
-            ->greeting('Hello!')
-            ->line("You’ve been invited to join the team **{$this->team->name}**.")
-            ->line('Click the button below to accept the invitation and get started.')
-            ->action('Accept Invitation', url("team/{$this->team->id}/invite/accept/{$notifiable->id}"))
-            ->line('If you did not expect this invitation, you may ignore this email.')
-            ->salutation('Best regards, Taskaty Team');
+            ->subject('New Task Assigned to You')
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line("You have been assigned a new task: **{$this->task->name}**.")
+            ->line("Please review the task details and start working on it.")
+            ->action('View Task', url("team/{$this->team_id}/board/{$this->board_id}/card/{$this->task->id}/view"))
+            ->line('Thank you for your dedication and effort!');
     }
 
     /**

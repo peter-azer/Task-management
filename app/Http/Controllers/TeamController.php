@@ -261,7 +261,8 @@ class TeamController extends Controller
                 "status" => "Pending"
             ]);
 
-            $user->notify(new TeamInvitation($team_id));
+            $team = Team::findOrFail($team_id);
+            $user->notify(new TeamInvitation($team));
         }
 
         return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
