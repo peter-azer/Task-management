@@ -64,6 +64,54 @@ class CardLogic
         return $evets;
     }
 
+    function archiveCard(int $target_card_id){
+        $target_card = Card::find($target_card_id);
+        $top_card = null;
+        $bottom_card = null;
+        if(!$target_card) return;
+        if($target_card->previous_id) $top_card = Card::find($target_card->previous_id);
+        if($target_card->next_id) $bottom_card = Card::find($target_card->next_id);
+
+        if($top_card){
+            $top_card->next_id = $bottom_card ? $bottom_card->id : null;
+            $top_card->save();
+        }
+        if($bottom_card){
+            $bottom_card->previous_id = $top_card ? $top_card->id : null;
+            $bottom_card->save();
+        }
+        $target_card->archive = true;
+        $target_card->save();
+    }
+
+    function unarchiveCard(int $target_card_id) {
+        $target_card = Card::find($target_card_id);
+        if(!$target_card) return;
+
+        // Find the last card in the column to append the unarchived card
+        $last_card = Card::where('column_id', $target_card->column_id)
+                        ->where('id', '!=', $target_card->id)
+                        ->where('archive', false)
+                        ->whereNull('next_id')
+                        ->first();
+                        
+        if($last_card) {
+            $last_card->next_id = $target_card->id;
+            $target_card->previous_id = $last_card->id;
+            $target_card->next_id = null;
+            $last_card->save();
+        } else {
+            // If no other cards in the list, just reset the pointers
+            $target_card->previous_id = null;
+            $target_card->next_id = null;
+        }
+        
+        $target_card->archive = false;
+        $target_card->save();
+        
+        return $target_card;
+    }
+
     function deleteCard(int $target_card_id){
         $target_card = Card::find($target_card_id);
         $top_card = null;

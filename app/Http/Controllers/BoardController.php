@@ -8,6 +8,7 @@ use App\Logic\TeamLogic;
 use App\Models\Board;
 use App\Models\Card;
 use App\Models\Column;
+use App\Models\User;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -19,8 +20,7 @@ class BoardController extends Controller
         protected TeamLogic $teamLogic,
         protected BoardLogic $boardLogic,
         protected CardLogic $cardLogic
-    ) {
-    }
+    ) {}
 
     public function createBoard(Request $request, $team_id)
     {
@@ -60,6 +60,22 @@ class BoardController extends Controller
         return response()->json($createdColumn);
     }
 
+    public function showArchivedCards($team_id, $board_id)
+    {
+        if (auth()->user()->hasRole("admin") || auth()->user()->hasRole("super-admin")) {
+            $board_id = intval($board_id);
+            $board = Board::with(['cards' => function ($query) {
+                $query->where('archive', true);
+            }])->where('id', $board_id)->get();
+            if (!$board) {
+                return redirect()->back()->with("notif", ["Error\nBoard not found"]);
+            }
+            return view('archive_cards', compact('board'));
+        } else {
+            return redirect()->route("board", ["team_id" => intval($team_id), "board_id" => intval($board_id)])->with("notif", ["Unauthorized"]);
+        }
+    }
+
     public function showBoard($team_id, $board_id)
     {
         $board_id = intval($board_id);
@@ -94,15 +110,15 @@ class BoardController extends Controller
 
     public function addCard(Request $request, $team_id, $board_id, $column_id)
     {
-        if(auth()->user()->can("create-task")) {
+        if (auth()->user()->can("create-task")) {
             $board_id = intval($board_id);
             $column_id = intval($column_id);
             $card_name = $request->name;
-            
+
             $newCard = $this->boardLogic->addCard($column_id, $card_name);
             $this->cardLogic->cardAddEvent($newCard->id, Auth::user()->id, "Created card");
             return response()->json($newCard);
-        }else {
+        } else {
             return response()->json(["notif" => "Unauthorized"]);
         }
     }

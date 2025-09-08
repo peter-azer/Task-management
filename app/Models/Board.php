@@ -29,4 +29,8 @@ class Board extends Model
     public function columns() {
         return $this->hasMany(Column::class);
     }
+
+    public function cards() {
+        return $this->hasManyThrough(Card::class, Column::class);
+    }
 }

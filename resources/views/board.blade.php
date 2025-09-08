@@ -34,6 +34,12 @@
             <p> Edit </p>
         </div>
         <hr class="w-full border">
+        <a data-role="menu-item" href="{{ route('archiveCards', ['team_id' => $board->team_id, 'board_id' => $board->id]) }}"
+            class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+            <x-fas-archive class="w-4 h-4 text-[#2c8bc6]" />
+            <p>Archive</p>
+        </a>
+        <hr class="w-full border">
         <div data-role="menu-item" onclick="ModalView.show('deleteBoard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-trash class="w-4 h-4 text-[#2c8bc6]" />

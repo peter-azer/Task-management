@@ -40,6 +40,7 @@ Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserControlle
 
 Route::middleware(["auth", "auth.session", "userInTeam"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
+Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/archive", [BoardController::class, "showArchivedCards"])->name("archiveCards");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}/delete", [BoardController::class, "deleteBoard"])->name("deleteBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->post("team/{team_id}/board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/data", [BoardController::class, "getData"])->name("boardJson");
@@ -56,6 +57,8 @@ Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("t
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/unassignTask", [CardController::class, "unassignTask"])->name("unassignTask");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/leave", [CardController::class, "leaveCard"])->name("leaveCard");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/delete", [CardController::class, "deleteCard"])->name("deleteCard");
+Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/do-archive", [CardController::class, "archiveCard"])->name("doArchiveCard");
+Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/do-unarchive", [CardController::class, "unarchiveCard"])->name("doUnarchiveCard");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/update", [CardController::class, "updateCard"])->name("updateCard");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/done", [CardController::class, "markDone"])->name("markDone");
 Route::middleware(["auth", "auth.session", "boardAccess", "cardExist"])->post("team/{team_id}/board/{board_id}/card/{card_id}/comment", [CardController::class, "addComment"])->name("commentCard");

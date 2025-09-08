@@ -117,7 +117,7 @@ class BoardLogic
             $cards = collect();
 
             // Base card query
-            $cardQuery = Card::where("column_id", $column->id)
+            $cardQuery = Card::where("column_id", $column->id)->where("archive", false)
                 ->with("members") // <-- this is good
                 ->whereNull('previous_id');
 

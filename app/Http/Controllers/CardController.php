@@ -50,13 +50,13 @@ class CardController extends Controller
         $user_id = $request->id;
         $user = User::find($user_id);
         $card_id = intval($card_id);
-        
+
         // Check if user is already assigned to this card
         $workers = $this->cardLogic->getWorkers($card_id);
         if ($workers->contains('id', $user_id)) {
             return redirect()->back()->with("notif", ["Warning\n{$user->name} is already assigned to this card"]);
         }
-        
+
         $this->cardLogic->addUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Joined card.");
 
@@ -70,20 +70,42 @@ class CardController extends Controller
         $request->validate([
             'id' => 'required|integer|exists:users,id'
         ]);
-        
+
         $user_id = $request->id;
         $user = User::find($user_id);
         $card_id = intval($card_id);
-        
+
         // Check if user is actually assigned to this card
         $workers = $this->cardLogic->getWorkers($card_id);
         if (!$workers->contains('id', $user_id)) {
             return redirect()->back()->with("notif", ["Warning\n{$user->name} is not assigned to this card"]);
         }
-        
+
         $this->cardLogic->removeUser($card_id, $user_id);
         $this->cardLogic->cardAddEvent($card_id, Auth::user()->id, "Removed {$user->name} from card.");
         return redirect()->back()->with("notif", ["Success\nRemoved {$user->name} from the card"]);
+    }
+
+
+    public function archiveCard(Request $request, $team_id, $board_id, $card_id)
+    {
+        if (auth()->user()->hasRole("admin") || auth()->user()->hasRole("super-admin")) {
+            $card_id = intval($card_id);
+            $this->cardLogic->archiveCard($card_id);
+            return redirect()->back()->with("notif", ["Card archived successfully"]);
+        } else {
+            return redirect()->back()->with("notif", ["Unauthorized"]);
+        }
+    }
+    public function unarchiveCard(Request $request, $team_id, $board_id, $card_id)
+    {
+        if (auth()->user()->hasRole("admin") || auth()->user()->hasRole("super-admin")) {
+            $card_id = intval($card_id);
+            $this->cardLogic->unarchiveCard($card_id);
+            return redirect()->back()->with("notif", ["Card Back to Board"]);
+        } else {
+            return redirect()->back()->with("notif", ["Unauthorized"]);
+        }
     }
 
     public function leaveCard(Request $request, $team_id, $board_id, $card_id)

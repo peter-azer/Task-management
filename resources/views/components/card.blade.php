@@ -95,7 +95,7 @@
                 const bgClass = this.is_done ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
                 const textClass = this.is_done ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
 
-                const pretty = (d) => {
+                const pretty = (d) => { 
                     const opts = {
                         month: 'short',
                         day: 'numeric'
@@ -164,9 +164,41 @@
 
         attachEvents() {
             const actions = this.ref.querySelector("[data-role='card-actions']");
+            
+            // Set up click handlers for action buttons
+            const setupButtonHandlers = () => {
+                // Archive button
+                const archiveBtn = actions.querySelector('[data-action="archive"]');
+                if (archiveBtn) {
+                    archiveBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        this.openArchiveModal();
+                    };
+                }
+                
+                // Edit button
+                const editBtn = actions.querySelector('[data-action="edit"]');
+                if (editBtn) {
+                    editBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        this.openEditModal();
+                    };
+                }
+                
+                // Assign button
+                const assignBtn = actions.querySelector('[data-action="assign"]');
+                if (assignBtn) {
+                    assignBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        this.openAssignModal();
+                    };
+                }
+            };
+            
             this.ref.addEventListener("mouseenter", () => {
                 actions.classList.remove("opacity-0");
                 actions.classList.add("opacity-100");
+                setupButtonHandlers();
             });
             this.ref.addEventListener("mouseleave", () => {
                 actions.classList.remove("opacity-100");
@@ -347,27 +379,36 @@
             return `
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-green-500 hover:text-white" title="Assign/Unassign Member" data-action="assign">👥</button>
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white" title="Edit" data-action="edit">✏️</button>
-                <button class="p-1 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white" title="Delete" data-action="delete">🗑️</button>
+                <button class="p-1 rounded-full bg-gray-200 hover:bg-amber-500 hover:text-white" title="Archive" data-action="archive">📁</button>
             `;
         }
 
 
-        openDeleteModal() {
+        openArchiveModal() {
             const board_id = this.board.ref.dataset.id;
 
-            // Open delete card modal
-            ModalView.show('deleteCard');
+            // Open archive card modal
+            ModalView.show('archiveCard');
+
+            // Update modal title and text
+            const modal = document.getElementById('archiveCard');
+            if (modal) {
+                const title = modal.querySelector('.modal-title');
+                const message = modal.querySelector('.modal-message');
+                if (title) title.textContent = 'Archive Card';
+                if (message) message.textContent = 'Are you sure you want to archive this card? You can restore it later from the archive.';
+            }
 
             // Wait for form to be mounted into DOM, then set the action
-            waitForElement("[data-role='delete-card-form']", 5000)
+            waitForElement("[data-role='archive-card-form']", 5000)
                 .then((form) => {
-                    // Build the delete card URL
-                    form.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/delete`;
+                    // Build the archive card URL
+                    form.action = `/team/${TEAM_ID}/board/${board_id}/card/${this.id}/do-archive`;
                 })
                 .catch((err) => {
-                    console.error("Delete modal form not found:", err);
+                    console.error("Archive modal form not found:", err);
                     if (typeof ToastView !== 'undefined') {
-                        ToastView.notif('Error', 'Failed to load delete form');
+                        ToastView.notif('Error', 'Failed to load archive form');
                     }
                 });
         }
@@ -388,14 +429,16 @@
 
 {{-- Delete Card Modal Template --}}
 @if (isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')))
-<template is-modal="deleteCard">
-    <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST" data-role="delete-card-form">
+<template is-modal="archiveCard">
+    <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST" data-role="archive-card-form">
         @csrf
         <input type="hidden" name="id" value="{{ Auth::user()->id }}">
-        <div class="text-red-600 mb-4">
-            <x-fas-exclamation-triangle class="w-6 h-6 mx-auto" />
+        <div class="text-amber-600 mb-4">
+            <span class="animate-bounce inline-block">
+                <x-fas-archive class="w-6 h-6 mx-auto" />
+            </span>
         </div>
-        <p class="mb-6 text-lg text-center">Are you sure you want to delete this card?</p>
+        <p class="mb-6 text-lg text-center">Are you sure you want to archive this card?</p>
         <div class="flex gap-6">
             <x-form.button type="submit">Yes</x-form.button>
             <x-form.button type="button" action="ModalView.close()" primary>No</x-form.button>
@@ -450,8 +493,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof ModalView !== 'undefined') {
             // Delete card modal
-            ModalView.onShow('deleteCard', (modal) => {
-                modal.querySelectorAll("form[data-role='delete-card-form']").forEach(
+            ModalView.onShow('archiveCard', (modal) => {
+                modal.querySelectorAll("form[data-role='archive-card-form']").forEach(
                     form => form.addEventListener("submit", () => {
                         if (typeof PageLoader !== 'undefined') {
                             PageLoader.show();

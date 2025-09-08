@@ -22,6 +22,7 @@ class Card extends Model
         'start_date',
         'end_date',
         'is_done',
+        'archive',
         'next_id',
     ];
 
