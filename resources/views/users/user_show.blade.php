@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200 m-16 p-6">
-    @if(auth()->user()->hasRole('super-admin'))
+    @if(auth()->user()->can('view-user'))
     <h2 class="text-2xl font-semibold mb-6 text-gray-700">User Details</h2>
     @else
     <h2 class="text-2xl font-semibold mb-6 text-gray-700">Member Tasks ({{ $user->name }})</h2>
     @endif
 
-    @if(auth()->user()->hasRole('super-admin'))
+    @if(auth()->user()->can('view-user'))
     <div class="space-y-5">
 
         <!-- Name -->

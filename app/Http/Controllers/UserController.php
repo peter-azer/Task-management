@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -27,8 +28,49 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view("users.user_edit", compact("user"));
+        $permissions = [
+
+            // user management
+            'User Permissions' => ['manage-users',
+            'create-user',
+            'edit-user',
+            'update-user',
+            'delete-user',
+            'view-user',
+            'assign-role',
+            'assign-permission',
+            'view-users'],
+
+            // team management
+            'Team Permissions' => ['manage-permissions',
+            'manage-members',
+            'create-team',
+            'edit-team',
+            'update-team',
+            'delete-team',
+            'send-invitation',
+            'manage-settings'],
+
+            // project management
+            'Board Permissions' => ['manage-projects',
+            'create-project',
+            'edit-project',
+            'delete-project',
+            'view-projects'],
+
+            // task management
+            'Task Permissions' => ['manage-tasks',
+            'create-task',
+            'edit-task',
+            'delete-task',
+            'view-tasks',
+            'assign-tasks',
+            'archive-task'],
+        ];
+
+        return view("users.user_edit", compact("user", "permissions"));
     }
+
     public function show($id)
     {
         $user = User::with([
@@ -95,6 +137,8 @@ class UserController extends Controller
                 "image_path" => "nullable",
                 "password" => "required|min:8",
                 "role" => "required",
+                'permissions' => 'array',
+                'permissions.*' => 'sometimes|string|exists:permissions,name',
             ]);
 
             $user = new User();
@@ -107,9 +151,14 @@ class UserController extends Controller
             }
             $user->password = bcrypt($request->password);
             $user->save();
+
             // Assign role if provided
             if ($request->filled('role')) {
                 $user->assignRole($request->role);
+            }
+            // Assign permissions if provided
+            if ($request->filled('permissions')) {
+                $user->syncPermissions($request->permissions);
             }
 
             return redirect()->back()->with("notif", ["Success: User created successfully"]);
@@ -129,6 +178,8 @@ class UserController extends Controller
                 "password" => "nullable|min:8",
                 "is_active" => "required|boolean",
                 "role" => "required|in:super-admin,admin,member,observer",
+                'permissions' => 'array',
+                'permissions.*' => 'sometimes|string|exists:permissions,name',
             ]);
 
             $user->name = $request->name;
@@ -152,6 +203,13 @@ class UserController extends Controller
             if ($request->filled('role')) {
                 $user->syncRoles($request->role);
             }
+            // Update permissions if provided
+            if ($request->filled('permissions')) {
+                $user->syncPermissions($request->permissions);
+            } else {
+                $user->syncPermissions([]); // Remove all permissions if none are provided
+            }
+
             return redirect()->back()->with("notif", ["Success: Profile updated successfully"]);
         } catch (\Exception $error) {
             return redirect()->back()->with("notif", [$error->getMessage()]);

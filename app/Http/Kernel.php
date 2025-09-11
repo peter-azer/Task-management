@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'boardAccess' => \App\Http\Middleware\BoardAccsessMiddleWare::class,
         'cardExist' => \App\Http\Middleware\CardExistMiddleware::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class, // Added role middleware alias
+        'permission' => \App\Http\Middleware\PermissionMiddleware::class, // Added permission middleware alias
     ];
 }

@@ -26,25 +26,32 @@
         </div>
     </a>
 
-    @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+    @if (Auth::user()->can('manage-projects'))
     <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
+
+        @can('edit-project')
         <div data-role="menu-item" onclick="ModalView.show('updateBoard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
             <p> Edit </p>
         </div>
         <hr class="w-full border">
+        @endcan
+
         <a data-role="menu-item" href="{{ route('archiveCards', ['team_id' => $board->team_id, 'board_id' => $board->id]) }}"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-archive class="w-4 h-4 text-[#2c8bc6]" />
             <p>Archive</p>
         </a>
         <hr class="w-full border">
+
+        @can('delete-project')
         <div data-role="menu-item" onclick="ModalView.show('deleteBoard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-trash class="w-4 h-4 text-[#2c8bc6]" />
             <p>Delete</p>
         </div>
+        @endcan
     </section>
     @endif
 </div>
@@ -100,7 +107,7 @@
 </template>
 
 {{-- modal declaration --}}
-@if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+@if (Auth::user()->can('manage-projects'))
 <template is-modal="updateBoard">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl font-bold">Edit Board</h1>
@@ -133,6 +140,7 @@
     </div>
 </template>
 
+@can('delete-project')
 <template is-modal="deleteBoard">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
         action="{{ route('deleteBoard', ['board_id' => $board->id, 'team_id' => $board->team_id]) }}">
@@ -145,6 +153,8 @@
         </div>
     </form>
 </template>
+@endcan
+
 @endif
 <template is-modal="addCol">
     <div class="flex flex-col w-full gap-4 p-4">
@@ -261,7 +271,7 @@
     }
 
     const board = new Board(@json($board));
-    @if(Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+    @if(Auth::user()->can('delete-project'))
     ModalView.onShow('deleteBoard', (modal) => {
         modal.querySelectorAll("form[action][method]").forEach(
             form => form.addEventListener("submit", () => PageLoader.show())

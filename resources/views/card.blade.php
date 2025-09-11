@@ -22,6 +22,7 @@
         </div>
     </a>
 
+    @can('manage-tasks')
     <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
         @can("edit-task")
         <div data-role="menu-item" onclick="ModalView.show('editCard')"
@@ -29,32 +30,36 @@
             <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
             <p> Edit </p>
         </div>
+        <hr class="w-full border">
         @endcan
-        <hr>
+
         @if ($workers->contains(Auth::user()))
         <div data-role="menu-item" onclick="ModalView.show('leaveCard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-right-from-bracket class="w-4 h-4 text-[#2c8bc6]" />
             <p> Quit Card </p>
         </div>
+        <hr class="w-full border">
         @else
-        @can("manage-tasks")
+        @can('assign-tasks')
         <div data-role="menu-item" onclick="ModalView.show('assignTask')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-plus class="w-4 h-4 text-[#2c8bc6]" />
             <p> Assign to Member </p>
         </div>
+        <hr class="w-full border">
         @endcan
         @endif
-        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
-        <hr class="w-full border">
+
+        @can ('delete-task')
         <div data-role="menu-item" onclick="ModalView.show('deleteCard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-trash class="w-4 h-4 text-red-300" />
             <p>Delete</p>
         </div>
-        @endif
+        @endcan
     </section>
+    @endcan
 </div>
 @endsection
 
@@ -141,7 +146,7 @@
     </div>
 </div>
 
-@if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+@can ('delete-task')
 <template is-modal="deleteCard">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
         action="{{ route('deleteCard', ['team_id' => $team->id, 'board_id' => $board->id, 'card_id' => $card->id]) }}">
@@ -154,7 +159,7 @@
         </div>
     </form>
 </template>
-@endif
+@endcan
 @can("manage-tasks")
 <template is-modal="assignTask">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
@@ -189,6 +194,7 @@
     </form>
 </template>
 
+@can("edit-task")
 <template is-modal="editCard">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl font-bold">Edit Card</h1>
@@ -218,6 +224,8 @@
         </form>
     </div>
 </template>
+@endcan
+
 @endsection
 
 @pushOnce('page')

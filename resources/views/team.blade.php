@@ -26,36 +26,52 @@
     </a>
 
     <section class="w-full overflow-hidden border-2 border-[#e0edf3] cursor-pointer select-none rounded-xl">
-        @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+        @if (Auth::user()->can('edit-team'))
+
+        @can('update-team')
         <div data-role="menu-item" onclick="ModalView.show('updateTeam')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-pen class="w-4 h-4 text-[#2c8bc6]" />
             <p> Edit </p>
         </div>
         <hr class="w-full border">
+        @endcan
+
+        @can('manage-members')
         <div data-role="menu-item" onclick="ModalView.show('manageMember')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-user-gear class="w-4 h-4 text-[#2c8bc6]" />
             <p>Members</p>
         </div>
         <hr class="w-full border">
+        @endcan
+
+        @can('send-invitation')
         <div data-role="menu-item" onclick="ModalView.show('inviteMember')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-user-plus class="w-4 h-4 text-[#2c8bc6]" />
             <p>Invite</p>
         </div>
         <hr class="w-full border">
+        @endcan
+
+        @can('create-project')
         <div data-role="menu-item" onclick="ModalView.show('createBoard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-table-columns class="w-4 h-4 text-[#2c8bc6]" />
             <p>Add Board</p>
         </div>
         <hr class="w-full border">
+        @endcan
+
+        @can('delete-team')
         <div data-role="menu-item" onclick="ModalView.show('deleteTeam')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
             <x-fas-trash class="w-4 h-4 text-red-300" />
             <p>Delete</p>
         </div>
+        @endcan
+
         @else
         <div data-role="menu-item" onclick="ModalView.show('leaveTeam')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
@@ -69,7 +85,8 @@
 @endsection
 
 @section('content')
-@if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+@if (Auth::user()->can('edit-team'))
+
 <template is-modal="changeProfile">
     <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4 flex-grow-1">
         <x-form.file name="picture" label="Choose Image" accept="image/png, image/jpeg, image/jpg" />
@@ -79,6 +96,7 @@
     </div>
 </template>
 
+@can('update-team')
 <template is-modal="updateTeam">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl text-[#0a2436] font-bold">Edit Team</h1>
@@ -112,7 +130,9 @@
         </form>
     </div>
 </template>
+@endcan
 
+@can('create-project')
 <template is-modal="createBoard">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl text-[#0a2436] font-bold">Create Board</h1>
@@ -143,7 +163,9 @@
         </form>
     </div>
 </template>
+@endcan
 
+@can('manage-members')
 <template is-modal="manageMember" class="bg-red-200">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl font-bold text-[#0a2436]">Manage Members</h1>
@@ -176,7 +198,9 @@
         </div>
     </div>
 </template>
+@endcan
 
+@can('send-invitation')
 <template is-modal="inviteMember" class="bg-red-200">
     <div class="flex flex-col w-full gap-4 p-4">
         <h1 class="text-3xl font-bold text-[#0a2436]">Invite People</h1>
@@ -215,7 +239,9 @@
         </div>
     </div>
 </template>
+@endcan
 
+@can('delete-team')
 <template is-modal="deleteTeam">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
         action="{{ route('doDeleteTeam', ['team_id' => $team->id]) }}">
@@ -228,6 +254,8 @@
         </div>
     </form>
 </template>
+@endcan
+
 @else
 <template is-modal="leaveTeam">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST"
@@ -246,7 +274,7 @@
 <div class="flex flex-col w-full h-full overflow-auto">
     <header class="w-full h-24 flex items-center p-6 bg-pattern-{{ $team->pattern }} border-b border-[#e0edf3]">
         <div class="w-20 h-20">
-            @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin'))
+            @if (Auth::user()->can('edit-team'))
             <x-avatar name="{{ $team->name }}" asset="{{ $team->image_path }}"
                 class="!w-20 !aspect-square !text-4xl" action="ModalView.show('changeProfile')">
                 <div
@@ -286,7 +314,8 @@
 
                 <div class="flex flex-wrap mt-2 gap-x-8 gap-y-6">
 
-                    @if ($boards->isEmpty() && Auth::user()->id == $owner->id)
+                    @if ($boards->isEmpty() && Auth::user()->can('create-projects'))
+                    {{-- If there is no board show create board --}}
                     <div onclick="ModalView.show('createBoard')"
                         class="flex flex-col items-center justify-center gap-2 text-gray-400 transition duration-300 bg-gray-100 shadow-md cursor-pointer select-none w-72 h-52 rounded-xl hover:shadow-2xl">
                         <x-fas-plus class="w-8 h-8" />
@@ -326,7 +355,7 @@
                 </div>
 
                 @foreach ($members as $member)
-                @if (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin') || Auth::user()->id == $member->id)
+                @if (Auth::user()->can('view-users') || Auth::user()->id == $member->id)
                 {{-- If the user is the owner or super-admin, make the member clickable --}}
                 <a href="{{ route('user.show', ['id' => $member->id]) }}" class="flex items-center gap-4">
                     <x-avatar name="{{ $member->name }}" asset="{{ $member->image_path }}"

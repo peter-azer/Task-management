@@ -373,13 +373,18 @@
         }
 
         renderActionButtons() {
-            const isOwnerOrAdmin = @json(isset($owner) && (Auth::user() -> id == $owner -> id || Auth::user() -> hasRole('super-admin')));
+            const isOwnerOrAdmin = @json(Auth::user()->can('manage-tasks'));
             if (!isOwnerOrAdmin) return '';
-
             return `
+                @can('assign-tasks')
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-green-500 hover:text-white" title="Assign/Unassign Member" data-action="assign">👥</button>
+                @endcan
+                @can('edit-task')
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white" title="Edit" data-action="edit">✏️</button>
+                @endcan
+                @can('archive-task')
                 <button class="p-1 rounded-full bg-gray-200 hover:bg-amber-500 hover:text-white" title="Archive" data-action="archive">📁</button>
+                @endcan
             `;
         }
 
@@ -428,7 +433,7 @@
 @endpushOnce
 
 {{-- Delete Card Modal Template --}}
-@if (isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')))
+@can ('archive-task')
 <template is-modal="archiveCard">
     <form class="flex flex-col items-center justify-center w-full h-full gap-6 p-4" method="POST" data-role="archive-card-form">
         @csrf
@@ -445,10 +450,10 @@
         </div>
     </form>
 </template>
-@endif
+@endcan
 
 {{-- Assign/Unassign Task Modal Template --}}
-@if (isset($owner) && (Auth::user()->id == $owner->id || Auth::user()->hasRole('super-admin')))
+@can ('assign-tasks')
 <template is-modal="assignTask">
     <div class="flex flex-col items-center justify-center w-full h-full gap-6 p-4">
         <p class="mb-6 text-lg text-center">Manage Task Assignment</p>
@@ -486,7 +491,7 @@
         <x-form.button type="button" action="ModalView.close()" class="w-full">Cancel</x-form.button>
     </div>
 </template>
-@endif
+@endcan
 
 <script>
     // Add event listeners for modals

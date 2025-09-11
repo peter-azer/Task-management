@@ -27,6 +27,7 @@ class RolesAndPermissions extends Seeder
             'manage-users',
             'create-user',
             'edit-user',
+            'update-user',
             'delete-user',
             'view-user',
             'assign-role',
@@ -35,8 +36,10 @@ class RolesAndPermissions extends Seeder
 
             // team management
             'manage-permissions',
+            'manage-members',
             'create-team',
             'edit-team',
+            'update-team',
             'delete-team',
             'send-invitation',
             'manage-settings',
@@ -47,12 +50,15 @@ class RolesAndPermissions extends Seeder
             'edit-project',
             'delete-project',
             'view-projects',
+
             // task management
             'manage-tasks',
             'create-task',
             'edit-task',
             'delete-task',
             'view-tasks',
+            'assign-tasks',
+            'archive-task',
         ];
 
         foreach ($permissions as $permission) {
@@ -80,6 +86,14 @@ class RolesAndPermissions extends Seeder
             'create-task',
             'edit-task',
             'delete-task',
+            'view-tasks',
+            'assign-tasks',
+            'archive-task',
+        ]);
+        $observerRole->syncPermissions([
+            // project management
+            'view-projects',
+            // task management
             'view-tasks',
         ]);
 

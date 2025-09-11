@@ -23,14 +23,18 @@
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-lg font-semibold text-gray-800">{{ $task['name'] }}</h3>
                     <div class="flex space-x-2">
+                        @can('archive-task')
                         <form method="POST" action="{{ route('doUnarchiveCard', ['team_id' => $task->column->board->team_id, 'board_id' => $task->column->board->id, 'card_id' => $task->id]) }}">
                             @csrf
                             <button type="submit" class="text-blue-600 hover:text-blue-800 text-sm">Unarchive</button>
                         </form>
+                        @endcan
+                        @can('delete-task')
                         <form method="POST" action="{{ route('deleteCard', ['team_id' => $task->column->board->team_id, 'board_id' => $task->column->board->id, 'card_id' => $task->id]) }}">
                             @csrf
                             <button type="submit" class="text-red-600 hover:text-red-800 text-sm">Delete</button>
                         </form>
+                        @endcan
 
                     </div>
                 </div>

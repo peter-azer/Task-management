@@ -36,7 +36,7 @@
                     <p class="text-lg font-normal"> Tasks Calendar </p>
                 </a>
 
-                @if (auth()->user()->hasRole('super-admin'))
+                @if (auth()->user()->can('view-user'))
                 <a data-role="menu-item" href="{{ route('users') }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ Route::currentRouteName() == 'users' ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
                     <x-fas-user class="w-6 h-6

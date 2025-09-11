@@ -55,12 +55,32 @@
             @endif
         </div>
 
+        <!-- permissions group -->
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto border p-3 rounded-md">
+                @foreach ($permissions as $group => $perms)
+                    <div>
+                        <h3 class="font-semibold mb-2 text-gray-800">{{ $group }}</h3>
+                        @foreach ($perms as $perm)
+                            <div class="flex items-center mb-1">
+                                <input type="checkbox" name="permissions[]" value="{{ $perm }}" id="perm_{{ $perm }}" class="h-4 w-4 text-blue-600 border-gray-300 rounded" {{ $user->hasPermissionTo($perm) ? 'checked' : '' }}>
+                                <label for="perm_{{ $perm }}" class="ml-2 block text-sm text-gray-700">{{ ucwords(str_replace('-', ' ', $perm)) }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
         <!-- Submit -->
         <div class="pt-4">
             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
                 Update User
             </button>
         </div>
+        
     </form>
 </div>
 @endsection
