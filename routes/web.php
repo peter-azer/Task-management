@@ -34,12 +34,12 @@ Route::middleware(["auth", "auth.session", "userInTeam", "permission:update-team
 Route::middleware(["auth", "auth.session", "permission:view-users"])->get("users", [UserController::class, "index"])->name("users");
 Route::middleware(["auth", "auth.session", "permission:edit-user"])->get("user/edit/{id}", [UserController::class, "edit"])->name("user.edit");
 Route::middleware(["auth", "auth.session", "permission:update-user"])->put("user/update/{id}", [UserController::class, "update"])->name("user.update");
-Route::middleware(["auth", "auth.session", "permission:view-user"])->get("user/show/{id}", [UserController::class, "show"])->name("user.show");
+Route::middleware(["auth", "auth.session"])->get("user/show/{id}", [UserController::class, "show"])->name("user.show");
 Route::middleware(["auth", "auth.session", "permission:create-user"])->post("user/store", [UserController::class, "store"])->name("user.store");
 Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserController::class, "showCalendar"])->name("user.calendar");
 
-Route::middleware(["auth", "auth.session", "userInTeam" , "permission:'create-project'"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
-Route::middleware(["auth", "auth.session", "boardAccess", "permission:'view-projects'"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
+Route::middleware(["auth", "auth.session", "userInTeam" , "permission:create-project"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
+Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/archive", [BoardController::class, "showArchivedCards"])->name("archiveCards");
 Route::middleware(["auth", "auth.session", "boardAccess", "permission:delete-project"])->post("team/{team_id}/board/{board_id}/delete", [BoardController::class, "deleteBoard"])->name("deleteBoard");
 Route::middleware(["auth", "auth.session", "boardAccess", "permission:edit-project"])->post("team/{team_id}/board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
