@@ -73,6 +73,9 @@ class UserController extends Controller
 
     public function show($id)
     {
+        if(!Auth::user()->hasPermissionTo('view-user') && Auth::user()->id != $id){
+            abort(403);
+        }
         $user = User::with([
             'teams',
             'cards' => function ($query) {
