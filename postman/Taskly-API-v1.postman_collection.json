@@ -1,0 +1,481 @@
+{
+  "info": {
+    "_postman_id": "8f5a9ad2-1b3e-4a4a-9d03-1f9b7a9e9c01",
+    "name": "Taskly API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection to test Taskly API v1 (Sanctum bearer token). Set baseUrl and token in an environment."
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\",\n  \"password_confirmation\": \"secret123\"\n}"
+            },
+            "description": "Register a new user and receive a bearer token."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\"\n}"
+            },
+            "description": "Login and receive a bearer token. Copy token to environment variable 'token'."
+          },
+          "response": []
+        },
+        {
+          "name": "Me (profile)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Get current authenticated user."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Invalidate current access token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?per_page=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"],
+              "query": [{"key": "per_page", "value": "15"}]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show User",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{user_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{user_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teams",
+      "item": [
+        {
+          "name": "My Teams",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams", "host": ["{{baseUrl}}"], "path": ["api","v1","teams"]}
+          }
+        },
+        {
+          "name": "Create Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams", "host": ["{{baseUrl}}"], "path": ["api","v1","teams"]},
+            "body": {"mode": "raw", "raw": "{\n  \"team_name\": \"My Team\",\n  \"team_description\": \"Team description\",\n  \"team_pattern\": \"blue\"\n}"}
+          }
+        },
+        {
+          "name": "Team Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}"]}
+          }
+        },
+        {
+          "name": "Update Team",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}"]},
+            "body": {"mode": "raw", "raw": "{\n  \"team_name\": \"Updated Team\",\n  \"team_description\": \"Updated description\",\n  \"team_pattern\": \"green\"\n}"}
+          }
+        },
+        {
+          "name": "Upload Team Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/image", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","image"]},
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "image", "type": "file", "src": []}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Teams",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/search?team_name=alpha", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","search"], "query": [{"key":"team_name","value":"alpha"}]}
+          }
+        },
+        {
+          "name": "Leave Team",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/leave", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","leave"]}
+          }
+        },
+        {
+          "name": "Invite Members",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/invites", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","invites"]},
+            "body": {"mode": "raw", "raw": "{\n  \"emails\": [\"user1@example.com\", \"user2@example.com\"]\n}"}
+          }
+        },
+        {
+          "name": "Delete Members",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/users", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","users"]},
+            "body": {"mode": "raw", "raw": "{\n  \"emails\": [\"user1@example.com\"]\n}"}
+          }
+        },
+        {
+          "name": "Get Invite Info",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/invite", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","invite"]}
+          }
+        },
+        {
+          "name": "Accept Invite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/invite/accept", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","invite","accept"]}
+          }
+        },
+        {
+          "name": "Reject Invite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/invite/reject", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","invite","reject"]}
+          }
+        },
+        {
+          "name": "Delete Team",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Boards & Columns",
+      "item": [
+        {
+          "name": "Create Board",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards"]},
+            "body": {"mode":"raw","raw":"{\n  \"board_name\": \"Roadmap\",\n  \"board_pattern\": \"pattern-a\"\n}"}
+          }
+        },
+        {
+          "name": "Show Board",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}"]}
+          }
+        },
+        {
+          "name": "Board Data",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/data", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","data"]}
+          }
+        },
+        {
+          "name": "Update Board",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}"]},
+            "body": {"mode":"raw","raw":"{\n  \"board_name\": \"Updated\",\n  \"board_pattern\": \"pattern-b\"\n}"}
+          }
+        },
+        {
+          "name": "Delete Board",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}"]}
+          }
+        },
+        {
+          "name": "Add Column",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/columns", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","columns"]},
+            "body": {"mode":"raw","raw":"{\n  \"column_name\": \"To Do\"\n}"}
+          }
+        },
+        {
+          "name": "Reorder Columns",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/columns/reorder", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","columns","reorder"]},
+            "body": {"mode":"raw","raw":"{\n  \"middle_id\": 2,\n  \"right_id\": 3,\n  \"left_id\": 1\n}"}
+          }
+        },
+        {
+          "name": "Update Column",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/columns/{{column_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","columns","{{column_id}}"]},
+            "body": {"mode":"raw","raw":"{\n  \"column_name\": \"Doing\"\n}"}
+          }
+        },
+        {
+          "name": "Delete Column",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/columns/{{column_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","columns","{{column_id}}"]}
+          }
+        },
+        {
+          "name": "Add Card to Column",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/columns/{{column_id}}/cards", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","columns","{{column_id}}","cards"]},
+            "body": {"mode":"raw","raw":"{\n  \"name\": \"Implement API\"\n}"}
+          }
+        },
+        {
+          "name": "Reorder Cards",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/reorder", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","reorder"]},
+            "body": {"mode":"raw","raw":"{\n  \"column_id\": 1,\n  \"middle_id\": 5,\n  \"bottom_id\": 6,\n  \"top_id\": 4\n}"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cards",
+      "item": [
+        {
+          "name": "Show Card",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}"]}
+          }
+        },
+        {
+          "name": "Assign User to Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/assign", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","assign"]},
+            "body": {"mode":"raw","raw":"{\n  \"id\": 1\n}"}
+          }
+        },
+        {
+          "name": "Unassign User from Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/unassign", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","unassign"]},
+            "body": {"mode":"raw","raw":"{\n  \"id\": 1\n}"}
+          }
+        },
+        {
+          "name": "Leave Card",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/leave", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","leave"]}
+          }
+        },
+        {
+          "name": "Delete Card",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}"]}
+          }
+        },
+        {
+          "name": "Update Card",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}"]},
+            "body": {"mode":"raw","raw":"{\n  \"card_name\": \"API Spec\",\n  \"start_date\": null,\n  \"end_date\": null,\n  \"card_description\": \"Details...\"\n}"}
+          }
+        },
+        {
+          "name": "Mark Done",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/done", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","done"]},
+            "body": {"mode":"raw","raw":"{\n  \"is_done\": true\n}"}
+          }
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/comment", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","comment"]},
+            "body": {"mode":"raw","raw":"{\n  \"content\": \"Looks good!\"\n}"}
+          }
+        },
+        {
+          "name": "Archive Card",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/archive", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","archive"]}
+          }
+        },
+        {
+          "name": "Unarchive Card",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {"raw": "{{baseUrl}}/api/v1/teams/{{team_id}}/boards/{{board_id}}/cards/{{card_id}}/unarchive", "host": ["{{baseUrl}}"], "path": ["api","v1","teams","{{team_id}}","boards","{{board_id}}","cards","{{card_id}}","unarchive"]}
+          }
+        }
+      ]
+    }
+  ],
+  "variable": []
+}
