@@ -86,7 +86,7 @@ class BoardController extends Controller
         if (!auth()->user()->can('create-task')) {
             return response()->json(['message' => 'Unauthorized'], HttpResponse::HTTP_FORBIDDEN);
         }
-        $newCard = $this->boardLogic->addCard($column_id, $request->name, $request->description ?? '');
+        $newCard = $this->boardLogic->addCard($column_id, $request->name, $request->description ?? 'N/A');
         $this->cardLogic->cardAddEvent($newCard->id, Auth::id(), 'Created card');
         return response()->json($newCard, 201);
     }

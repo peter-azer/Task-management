@@ -81,7 +81,7 @@
                 <hr class="border">
                 <div class="w-full h-auto p-2 px-5 mt-1 rounded bg-slate-50">
                     <div class="text-base text-left" style="white-space: pre-line;">
-                        @if ($card->description)
+                        @if ($card->description && $card->description != 'N/A')
                         {{ $card->description }}
                         @else
                         <div class="flex items-center justify-center w-full h-full text-gray-500">
