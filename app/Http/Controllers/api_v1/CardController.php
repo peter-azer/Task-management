@@ -7,6 +7,7 @@ use App\Logic\CardLogic;
 use App\Logic\TeamLogic;
 use App\Models\Card;
 use App\Models\User;
+use App\Notifications\AssignTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,6 +46,8 @@ class CardController extends Controller
             return response()->json(['message' => $user->name . ' is already assigned to this card'], 409);
         }
         $this->cardLogic->addUser($card_id, $user_id);
+        $task = Card::findOrFail($card_id);
+        $user->notify(new AssignTask($task, $team_id, $board_id));
         $this->cardLogic->cardAddEvent($card_id, Auth::id(), 'Joined card.');
         return response()->json(['message' => 'assigned']);
     }
