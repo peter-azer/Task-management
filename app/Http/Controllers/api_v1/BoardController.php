@@ -80,13 +80,12 @@ class BoardController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
         ]);
         // permissions can be enforced via policies/middleware; mirroring simple check
         if (!auth()->user()->can('create-task')) {
             return response()->json(['message' => 'Unauthorized'], HttpResponse::HTTP_FORBIDDEN);
         }
-        $newCard = $this->boardLogic->addCard($column_id, $request->name, $request->description ?? 'N/A');
+        $newCard = $this->boardLogic->addCard($column_id, $request->name);
         $this->cardLogic->cardAddEvent($newCard->id, Auth::id(), 'Created card');
         return response()->json($newCard, 201);
     }

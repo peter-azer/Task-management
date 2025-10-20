@@ -83,7 +83,7 @@ class BoardLogic
         return $column;
     }
 
-    public function addCard(int $column_id, string $card_name, string $card_description)
+    public function addCard(int $column_id, string $card_name)
     {
         $lastCard = Card::where("column_id", $column_id)
             ->whereNull("next_id")
@@ -91,7 +91,6 @@ class BoardLogic
 
         $newCard = Card::create([
             "name" => $card_name,
-            "description" => $card_description,
             "column_id" => $column_id,
             "previous_id" => $lastCard ? $lastCard->id : null
         ]);
