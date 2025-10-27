@@ -86,19 +86,19 @@ class CardController extends Controller
     public function update(Request $request, int $team_id, int $board_id, int $card_id)
     {
         $request->validate([
-            'name' => 'required|string|max:95',
+            'card_name' => 'required|string|max:95',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'description' => 'nullable|string',
+            'card_description' => 'nullable|string',
         ]);
         $user_id = Auth::id();
         $card = Card::findOrFail($card_id);
-        $card->name = $request->name;
+        $card->name = $request->card_name;
         $card->start_date = $request->start_date;
         $card->end_date = $request->end_date;
-        $card->description = $request->description;
+        $card->description = $request->card_description;
         $card->save();
-        $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card informations.');
+        $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card information.');
         return response()->json(['message' => 'updated', 'card' => $card]);
     }
 
