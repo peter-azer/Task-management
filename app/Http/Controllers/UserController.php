@@ -31,41 +31,49 @@ class UserController extends Controller
         $permissions = [
 
             // user management
-            'User Permissions' => ['manage-users',
-            'create-user',
-            'edit-user',
-            'update-user',
-            'delete-user',
-            'view-user',
-            'assign-role',
-            'assign-permission',
-            'view-users'],
+            'User Permissions' => [
+                'manage-users',
+                'create-user',
+                'edit-user',
+                'update-user',
+                'delete-user',
+                'view-user',
+                'assign-role',
+                'assign-permission',
+                'view-users'
+            ],
 
             // team management
-            'Team Permissions' => ['manage-permissions',
-            'manage-members',
-            'create-team',
-            'edit-team',
-            'update-team',
-            'delete-team',
-            'send-invitation',
-            'manage-settings'],
+            'Team Permissions' => [
+                'manage-permissions',
+                'manage-members',
+                'create-team',
+                'edit-team',
+                'update-team',
+                'delete-team',
+                'send-invitation',
+                'manage-settings'
+            ],
 
             // project management
-            'Board Permissions' => ['manage-projects',
-            'create-project',
-            'edit-project',
-            'delete-project',
-            'view-projects'],
+            'Board Permissions' => [
+                'manage-projects',
+                'create-project',
+                'edit-project',
+                'delete-project',
+                'view-projects'
+            ],
 
             // task management
-            'Task Permissions' => ['manage-tasks',
-            'create-task',
-            'edit-task',
-            'delete-task',
-            'view-tasks',
-            'assign-tasks',
-            'archive-task'],
+            'Task Permissions' => [
+                'manage-tasks',
+                'create-task',
+                'edit-task',
+                'delete-task',
+                'view-tasks',
+                'assign-tasks',
+                'archive-task'
+            ],
         ];
 
         return view("users.user_edit", compact("user", "permissions"));
@@ -73,7 +81,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        if((!Auth::user()->hasPermissionTo('view-user')) && (Auth::user()->id != $id)){
+        if ((!Auth::user()->hasPermissionTo('view-user')) && (Auth::user()->id != $id)) {
             abort(403);
         }
         $user = User::with([
@@ -89,26 +97,30 @@ class UserController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('super-admin')) {
-            // Super admin sees all tasks
-            $tasks = Card::all();
+            // Super admin sees all non-archived tasks
+            $tasks = Card::where('archive', false)->whereNull('archived_at')->get();
         } elseif ($user->hasRole('admin')) {
             // Admin sees tasks from teams they own
             $teamIds = $user->teamRelations()
                 ->where('status', 'Owner')
                 ->pluck('team_id');
 
-            $tasks = Card::whereHas('column.board', function ($query) use ($teamIds) {
-                $query->whereIn('team_id', $teamIds);
-            })->orWhereHas('users', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->get();
+            $tasks = Card::where('archive', false)->whereNull('archived_at')
+                ->where(function ($q) use ($teamIds, $user) {
+                    $q->whereHas('column.board', function ($query) use ($teamIds) {
+                        $query->whereIn('team_id', $teamIds);
+                    })->orWhereHas('users', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    });
+                })->get();
         } else {
             // Regular users see their own tasks and team tasks
             $teamIds = $user->teams()->pluck('teams.id');
 
-            $tasks = Card::whereHas('users', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->get();
+            $tasks = Card::where('archive', false)->whereNull('archived_at')
+                ->whereHas('users', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })->get();
         }
 
         // Convert to calendar events

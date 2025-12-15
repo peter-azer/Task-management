@@ -117,8 +117,10 @@ class TeamLogic
     public function inviteAccept(int $user_id, int $team_id)
     {
         $teamStatus = UserTeam::where([
-            "user_id", $user_id,
-            "team_id", $team_id,
+            "user_id",
+            $user_id,
+            "team_id",
+            $team_id,
         ])->first();
 
         $teamStatus->status = "Member";
@@ -137,10 +139,26 @@ class TeamLogic
     {
         $boards = Team::find($team_id)
             ->boards()
-            ->where("name", "LIKE", "%".$search."%")
+            ->where("name", "LIKE", "%" . $search . "%")
+            ->whereNull('archived_at')
+            ->where('archive', false)
             ->get();
 
         return $boards;
+    }
+
+    /**
+     * Get archived boards for a team
+     */
+    public function getArchivedBoards(int $team_id, string $search = "%")
+    {
+        return Team::find($team_id)
+            ->boards()
+            ->where('name', 'LIKE', "%" . $search . "%")
+            ->where(function ($q) {
+                $q->whereNotNull('archived_at')->orWhere('archive', true);
+            })
+            ->get();
     }
 
     /**

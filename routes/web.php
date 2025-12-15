@@ -38,9 +38,11 @@ Route::middleware(["auth", "auth.session"])->get("user/show/{id}", [UserControll
 Route::middleware(["auth", "auth.session", "permission:create-user"])->post("user/store", [UserController::class, "store"])->name("user.store");
 Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserController::class, "showCalendar"])->name("user.calendar");
 
-Route::middleware(["auth", "auth.session", "userInTeam" , "permission:create-project"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
+Route::middleware(["auth", "auth.session", "userInTeam", "permission:create-project"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/archive", [BoardController::class, "showArchivedCards"])->name("archiveCards");
+Route::middleware(["auth", "auth.session", "boardAccess", "permission:edit-project"])->post("team/{team_id}/board/{board_id}/do-archive", [BoardController::class, "archiveBoard"])->name("doArchiveBoard");
+Route::middleware(["auth", "auth.session", "boardAccess", "permission:edit-project"])->post("team/{team_id}/board/{board_id}/do-unarchive", [BoardController::class, "unarchiveBoard"])->name("doUnarchiveBoard");
 Route::middleware(["auth", "auth.session", "boardAccess", "permission:delete-project"])->post("team/{team_id}/board/{board_id}/delete", [BoardController::class, "deleteBoard"])->name("deleteBoard");
 Route::middleware(["auth", "auth.session", "boardAccess", "permission:edit-project"])->post("team/{team_id}/board/{board_id}", [BoardController::class, "updateBoard"])->name("updateBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}/data", [BoardController::class, "getData"])->name("boardJson");

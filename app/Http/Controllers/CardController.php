@@ -47,6 +47,10 @@ class CardController extends Controller
 
     public function assignTask(Request $request, $team_id, $board_id, $card_id)
     {
+        $card = Card::findOrFail((int)$card_id);
+        if ($this->isArchived($card)) {
+            return redirect()->back()->with("notif", ["Warning\nCard is archived"]);
+        }
         $user_id = $request->id;
         $user = User::find($user_id);
         $card_id = intval($card_id);
@@ -67,6 +71,10 @@ class CardController extends Controller
 
     public function unassignTask(Request $request, $team_id, $board_id, $card_id)
     {
+        $card = Card::findOrFail((int)$card_id);
+        if ($this->isArchived($card)) {
+            return redirect()->back()->with("notif", ["Warning\nCard is archived"]);
+        }
         $request->validate([
             'id' => 'required|integer|exists:users,id'
         ]);
@@ -121,6 +129,12 @@ class CardController extends Controller
 
     public function deleteCard(Request $request, $team_id, $board_id, $card_id)
     {
+        $card = Card::findOrFail((int)$card_id);
+        if ($this->isArchived($card)) {
+            return redirect()
+                ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
+                ->with("notif", ["Warning\nCard is archived"]);
+        }
         $this->cardLogic->deleteCard(intval($card_id));
         return redirect()
             ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
@@ -136,7 +150,10 @@ class CardController extends Controller
         ]);
         $user_id = AUth::user()->id;
         $card_id = intval($card_id);
-        $card = Card::find($card_id);
+        $card = Card::findOrFail($card_id);
+        if ($this->isArchived($card)) {
+            return redirect()->back()->with("notif", ["Warning\nCard is archived"]);
+        }
         $card->name = $request->card_name;
         $card->start_date = $request->start_date;
         $card->end_date = $request->end_date;
@@ -154,6 +171,9 @@ class CardController extends Controller
         // $is_done = $validatedData['is_done'] =  ? 1 : 0;
         $user_id = auth()->id();
         $card = Card::findOrFail(intval($card_id));
+        if ($this->isArchived($card)) {
+            return response()->json(['message' => 'forbidden: archived'], 403);
+        }
         $card->update($validatedData);
 
         $statusText = $card->is_done ? 'marked as done' : 'marked as not done';
@@ -166,7 +186,16 @@ class CardController extends Controller
         $request->validate(["content" => "required|max:200"]);
         $user_id = AUth::user()->id;
         $card_id = intval($card_id);
+        $card = Card::findOrFail($card_id);
+        if ($this->isArchived($card)) {
+            return redirect()->back()->with("notif", ["Warning\nCard is archived"]);
+        }
         $this->cardLogic->cardComment($card_id, $user_id, $request->content);
         return redirect()->back();
+    }
+
+    protected function isArchived(Card $card): bool
+    {
+        return (bool) (($card->archive ?? false) || ($card->archived_at ?? null));
     }
 }

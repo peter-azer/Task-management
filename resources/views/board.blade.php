@@ -45,6 +45,30 @@
         </a>
         <hr class="w-full border">
 
+        @can('edit-project')
+        @php($isArchived = ($board->archive ?? false) || ($board->archived_at ?? null))
+        @if(!$isArchived)
+        <form method="POST" action="{{ route('doArchiveBoard', ['team_id' => $board->team_id, 'board_id' => $board->id]) }}">
+            @csrf
+            <button type="submit" data-role="menu-item"
+                class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                <x-fas-box-archive class="w-4 h-4 text-[#2c8bc6]" />
+                <p>Archive Board</p>
+            </button>
+        </form>
+        @else
+        <form method="POST" action="{{ route('doUnarchiveBoard', ['team_id' => $board->team_id, 'board_id' => $board->id]) }}">
+            @csrf
+            <button type="submit" data-role="menu-item"
+                class="flex items-center w-full gap-3 px-6 py-2 text-[#fff] cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
+                <x-fas-rotate-left class="w-4 h-4 text-[#2c8bc6]" />
+                <p>Restore Board</p>
+            </button>
+        </form>
+        @endif
+        <hr class="w-full border">
+        @endcan
+
         @can('delete-project')
         <div data-role="menu-item" onclick="ModalView.show('deleteBoard')"
             class="flex items-center w-full gap-3 px-6 py-2 text-red-300 cursor-pointer select-none hover:bg-[#0f5490] hover:text-white">
@@ -86,7 +110,7 @@
         <form method="POST" class="flex flex-col gap-4" data-role="edit-card-form">
             @csrf
             <x-form.textarea name="card_name" label="Card's Title" required value="" />
-            
+
             <div class="mb-4">
                 <label for="start_date" class="block mb-1 font-semibold text-gray-700">Start Date & Time</label>
                 <input type="datetime-local" name="start_date" id="edit_start_date"
@@ -271,7 +295,7 @@
     }
 
     const board = new Board(@json($board));
-    @if(Auth::user()->can('delete-project'))
+    @if(Auth::user() -> can('delete-project'))
     ModalView.onShow('deleteBoard', (modal) => {
         modal.querySelectorAll("form[action][method]").forEach(
             form => form.addEventListener("submit", () => PageLoader.show())

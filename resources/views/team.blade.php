@@ -336,6 +336,31 @@
                     </a>
                     @endforeach
                 </div>
+
+                @can('edit-project')
+                @if(isset($archived_boards) && $archived_boards->count() > 0)
+                <hr class="my-6">
+                <details class="border border-[#e0edf3] rounded-xl">
+                    <summary class="px-4 py-2 cursor-pointer select-none font-semibold">Archived Boards ({{ $archived_boards->count() }})</summary>
+                    <div class="p-4 flex flex-wrap gap-6">
+                        @foreach ($archived_boards as $ab)
+                        <div class="flex flex-col transition duration-300 border border-[#e0edf3] shadow-sm rounded-xl w-72 overflow-hidden bg-white">
+                            <div class="flex items-center justify-between px-4 py-2 border-b border-[#e0edf3]">
+                                <h4 class="font-semibold truncate">{{ $ab->name }}</h4>
+                            </div>
+                            <div class="p-4 flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Archived</span>
+                                <form method="POST" action="{{ route('doUnarchiveBoard', ['team_id' => $team->id, 'board_id' => $ab->id]) }}">
+                                    @csrf
+                                    <button type="submit" class="text-sm text-blue-600 hover:text-blue-800">Restore</button>
+                                </form>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </details>
+                @endif
+                @endcan
             </section>
 
         </section>

@@ -65,6 +65,7 @@ class BoardLogic
         $board = Board::find($board_id);
 
         if ($board == null) return null;
+        if (($board->archive ?? false) || ($board->archived_at ?? null)) return null;
 
         $lastColumn = Column::where("board_id", $board->id)
             ->whereNull("next_id")
@@ -85,6 +86,14 @@ class BoardLogic
 
     public function addCard(int $column_id, string $card_name)
     {
+        // prevent adding to archived boards
+        $column = Column::find($column_id);
+        if ($column) {
+            $board = Board::find($column->board_id);
+            if ($board && (($board->archive ?? false) || ($board->archived_at ?? null))) {
+                return null;
+            }
+        }
         $lastCard = Card::where("column_id", $column_id)
             ->whereNull("next_id")
             ->first();
@@ -117,7 +126,9 @@ class BoardLogic
             $cards = collect();
 
             // Base card query
-            $cardQuery = Card::where("column_id", $column->id)->where("archive", false)
+            $cardQuery = Card::where("column_id", $column->id)
+                ->where("archive", false)
+                ->whereNull('archived_at')
                 ->with("members") // <-- this is good
                 ->whereNull('previous_id');
 

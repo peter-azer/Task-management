@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Card extends Model
 {
@@ -23,6 +24,7 @@ class Card extends Model
         'end_date',
         'is_done',
         'archive',
+        'archived_at',
         'next_id',
     ];
 
@@ -37,6 +39,19 @@ class Card extends Model
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * Scopes
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('archived_at')->where('archive', false);
+    }
+
+    public function scopeArchived(Builder $query): Builder
+    {
+        return $query->whereNotNull('archived_at')->orWhere('archive', true);
+    }
 
     public function board()
     {
@@ -64,8 +79,7 @@ class Card extends Model
     }
 
     public function members()
-{
-    return $this->belongsToMany(User::class, 'card_user', 'card_id', 'user_id');
-}
-
+    {
+        return $this->belongsToMany(User::class, 'card_user', 'card_id', 'user_id');
+    }
 }

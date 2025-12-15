@@ -113,6 +113,7 @@ class TeamController extends Controller
         $team_owner = $this->teamLogic->getTeamOwner($selected_team->id);
         $team_members = $this->teamLogic->getTeamMember($selected_team->id);
         $team_boards = $this->teamLogic->getBoards($selected_team->id);
+        $archived_boards = $this->teamLogic->getArchivedBoards($selected_team->id);
 
         return view("team")
             ->with("team", $selected_team)
@@ -120,7 +121,8 @@ class TeamController extends Controller
             ->with("members", $team_members)
             ->with("patterns", TeamLogic::PATTERN)
             ->with("backgrounds", BoardLogic::PATTERN)
-            ->with("boards", $team_boards);
+            ->with("boards", $team_boards)
+            ->with("archived_boards", $archived_boards);
     }
 
     public function search(Request $request)

@@ -79,6 +79,12 @@ class BoardController extends Controller
     public function showBoard($team_id, $board_id)
     {
         $board_id = intval($board_id);
+        $boardModel = Board::find($board_id);
+        if (!$boardModel) abort(404);
+        if (($boardModel->archive ?? false) || ($boardModel->archived_at ?? null)) {
+            return redirect()->route('viewTeam', ['team_id' => $boardModel->team_id])
+                ->with('notif', ["Warning\nBoard is archived"]);
+        }
         $board = $this->boardLogic->getData($board_id);
         $team = Team::find($board->team_id);
         $teamOwner = $this->teamLogic->getTeamOwner($board->team_id);
@@ -90,6 +96,26 @@ class BoardController extends Controller
             ->with("board", $board)
             ->with("team_members", $teamMembers)
             ->with("patterns", BoardLogic::PATTERN);
+    }
+
+    public function archiveBoard(Request $request, $team_id, $board_id)
+    {
+        if (!auth()->user()->can('edit-project')) return redirect()->back()->with('notif', ['Unauthorized']);
+        $board = Board::findOrFail(intval($board_id));
+        $board->archive = true;
+        $board->archived_at = now();
+        $board->save();
+        return redirect()->route('viewTeam', ['team_id' => $board->team_id])->with('notif', ['Success\nBoard archived']);
+    }
+
+    public function unarchiveBoard(Request $request, $team_id, $board_id)
+    {
+        if (!auth()->user()->can('edit-project')) return redirect()->back()->with('notif', ['Unauthorized']);
+        $board = Board::findOrFail(intval($board_id));
+        $board->archive = false;
+        $board->archived_at = null;
+        $board->save();
+        return redirect()->route('board', ['team_id' => $board->team_id, 'board_id' => $board->id])->with('notif', ['Success\nBoard restored']);
     }
 
     public function updateBoard(Request $request)
