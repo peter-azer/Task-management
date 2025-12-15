@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\AssignTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class CardController extends Controller
 {
@@ -85,21 +86,30 @@ class CardController extends Controller
     // PUT /api/v1/teams/{team_id}/boards/{board_id}/cards/{card_id}
     public function update(Request $request, int $team_id, int $board_id, int $card_id)
     {
-        $request->validate([
-            'card_name' => 'required|string|max:95',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'card_description' => 'nullable|string',
-        ]);
-        $user_id = Auth::id();
-        $card = Card::findOrFail($card_id);
-        $card->name = $request->card_name;
-        $card->start_date = $request->start_date;
-        $card->end_date = $request->end_date;
-        $card->description = $request->card_description;
-        $card->save();
-        $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card information.');
-        return response()->json(['message' => 'updated', 'card' => $card]);
+        try {
+
+            $request->validate([
+                'card_name' => 'sometimes|string|max:95',
+                'start_date' => 'nullable|date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'card_description' => 'nullable|string',
+            ]);
+            $user_id = Auth::id();
+            $card = Card::findOrFail($card_id);
+            $card->name = $request->card_name ?? $card->name;
+            $card->start_date = $request->start_date
+                ? Carbon::parse($request->start_date)->format('Y-m-d H:i:s')
+                : $card->start_date;
+            $card->end_date = $request->end_date
+                ? Carbon::parse($request->end_date)->format('Y-m-d H:i:s')
+                : $card->end_date;
+            $card->description = $request->card_description;
+            $card->save();
+            $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card information.');
+            return response()->json(['message' => 'updated', 'card' => $card]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 500);
+        }
     }
 
     // PATCH /api/v1/teams/{team_id}/boards/{board_id}/cards/{card_id}/done
