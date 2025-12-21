@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\AssignTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class CardController extends Controller
 {
@@ -144,25 +145,24 @@ class CardController extends Controller
     public function updateCard(Request $request, $team_id, $board_id, $card_id)
     {
         try {
-        $request->validate([
-            "card_name" => "required|max:95",
-            "start_date" => "nullable|date",
-            "end_date" => "nullable|date|after_or_equal:start_date",
-            'card_description' => 'nullable|string',
-
-        ]);
-        $user_id = AUth::user()->id;
-        $card_id = intval($card_id);
-        $card = Card::findOrFail($card_id);
-        if ($this->isArchived($card)) {
-            return redirect()->back()->with("notif", ["Warning\nCard is archived"]);
-        }
-        $card->name = $request->card_name;
-        $card->start_date = $request->start_date;
-        $card->end_date = $request->end_date;
-        $card->description = $request->card_description;
-        $card->save();
-        $this->cardLogic->cardAddEvent($card_id, $user_id, "Updated card informations.");
+            $request->validate([
+                'card_name' => 'sometimes|string|max:95',
+                'start_date' => 'nullable|date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'card_description' => 'nullable|string',
+            ]);
+            $user_id = Auth::id();
+            $card = Card::findOrFail($card_id);
+            $card->name = $request->card_name ?? $card->name;
+            $card->start_date = $request->start_date
+                ? Carbon::parse($request->start_date)->format('Y-m-d H:i:s')
+                : $card->start_date;
+            $card->end_date = $request->end_date
+                ? Carbon::parse($request->end_date)->format('Y-m-d H:i:s')
+                : $card->end_date;
+            $card->description = $request->card_description;
+            $card->save();
+            $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card information.');
         return redirect()->back()->with("notif", ["Succss\nCard updated successfully"]);
         } catch (\Exception $e) {
             return redirect()->back()->with("notif", ["Error\n" . $e->getMessage()]);
