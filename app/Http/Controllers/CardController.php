@@ -131,11 +131,11 @@ class CardController extends Controller
     public function deleteCard(Request $request, $team_id, $board_id, $card_id)
     {
         $card = Card::findOrFail((int)$card_id);
-        if ($this->isArchived($card)) {
-            return redirect()
-                ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
-                ->with("notif", ["Warning\nCard is archived"]);
-        }
+        // if ($this->isArchived($card)) {
+        //     return redirect()
+        //         ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
+        //         ->with("notif", ["Warning\nCard is archived"]);
+        // }
         $this->cardLogic->deleteCard(intval($card_id));
         return redirect()
             ->route("board", ["team_id" => $team_id, "board_id" => $board_id])
