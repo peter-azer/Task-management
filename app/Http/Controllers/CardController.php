@@ -165,7 +165,7 @@ class CardController extends Controller
         $this->cardLogic->cardAddEvent($card_id, $user_id, "Updated card informations.");
         return redirect()->back()->with("notif", ["Succss\nCard updated successfully"]);
         } catch (\Exception $e) {
-            return redirect()->back()->with("notif", ["Error\n" . $e->getMessage()]);
+            return redirect()->json("notif", ["Error\n" . $e->getMessage()]);
         }
     }
 
