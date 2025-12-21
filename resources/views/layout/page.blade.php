@@ -36,6 +36,15 @@
                     <p class="text-lg font-normal"> Tasks Calendar </p>
                 </a>
 
+                <a data-role="menu-item" href="{{ url('tasks/delayed') }}"
+                    class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ request()->is('tasks/delayed') ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
+                    <x-fas-triangle-exclamation class="w-6 h-6
+                    {{ request()->is('tasks/delayed') ? 'text-white' : 'text-[#dc2626]' }}
+                    " />
+                    <p class="text-lg font-normal"> Delayed Tasks </p>
+                    <span id="delayed-badge" class="ml-auto inline-flex items-center justify-center text-xs font-semibold rounded-full bg-red-600 text-white px-2 py-0.5" style="min-width:1.25rem; display:none;">0</span>
+                </a>
+
                 @if (auth()->user()->can('view-user'))
                 <a data-role="menu-item" href="{{ route('users') }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ Route::currentRouteName() == 'users' ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
@@ -100,5 +109,33 @@
     document.querySelectorAll("form[action][method]").forEach(
         form => form.addEventListener("submit", () => PageLoader.show())
     );
+
+    // Fetch delayed tasks count and update badge
+    (function() {
+        const badge = document.getElementById('delayed-badge');
+        if (!badge) return;
+        const update = () => {
+            fetch("{{ url('tasks/delayed/count') }}", {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(({
+                    delayed
+                }) => {
+                    if (typeof delayed === 'number' && delayed > 0) {
+                        badge.textContent = delayed;
+                        badge.style.display = 'inline-flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(() => {
+                    /* ignore */ });
+        };
+        update();
+        setInterval(update, 30000);
+    })();
 </script>
 @endPushOnce

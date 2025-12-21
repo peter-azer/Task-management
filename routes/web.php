@@ -5,6 +5,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TaskOverviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function () {
@@ -37,6 +38,10 @@ Route::middleware(["auth", "auth.session", "permission:update-user"])->put("user
 Route::middleware(["auth", "auth.session"])->get("user/show/{id}", [UserController::class, "show"])->name("user.show");
 Route::middleware(["auth", "auth.session", "permission:create-user"])->post("user/store", [UserController::class, "store"])->name("user.store");
 Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserController::class, "showCalendar"])->name("user.calendar");
+
+// Delayed Tasks overview
+Route::middleware(["auth", "auth.session"])->get("tasks/delayed", [TaskOverviewController::class, "delayedIndex"])->name("tasks.delayed");
+Route::middleware(["auth", "auth.session"])->get("tasks/delayed/count", [TaskOverviewController::class, "delayedCount"])->name("tasks.delayed.count");
 
 Route::middleware(["auth", "auth.session", "userInTeam", "permission:create-project"])->post("team/{team_id}/board", [BoardController::class, "createBoard"])->name("createBoard");
 Route::middleware(["auth", "auth.session", "boardAccess"])->get("team/{team_id}/board/{board_id}", [BoardController::class, "showBoard"])->name("board");
