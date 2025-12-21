@@ -147,6 +147,8 @@ class CardController extends Controller
             "card_name" => "required|max:95",
             "start_date" => "nullable|date",
             "end_date" => "nullable|date|after_or_equal:start_date",
+            'card_description' => 'nullable|string',
+
         ]);
         $user_id = AUth::user()->id;
         $card_id = intval($card_id);
