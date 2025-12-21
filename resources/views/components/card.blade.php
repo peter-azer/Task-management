@@ -95,7 +95,7 @@
                 const bgClass = this.is_done ? 'bg-green-100' : (isLate ? 'bg-red-100' : 'bg-yellow-100');
                 const textClass = this.is_done ? 'text-green-700' : (isLate ? 'text-red-700' : 'text-yellow-700');
 
-                const pretty = (d) => { 
+                const pretty = (d) => {
                     const opts = {
                         month: 'short',
                         day: 'numeric'
@@ -164,7 +164,7 @@
 
         attachEvents() {
             const actions = this.ref.querySelector("[data-role='card-actions']");
-            
+
             // Set up click handlers for action buttons
             const setupButtonHandlers = () => {
                 // Archive button
@@ -175,7 +175,7 @@
                         this.openArchiveModal();
                     };
                 }
-                
+
                 // Edit button
                 const editBtn = actions.querySelector('[data-action="edit"]');
                 if (editBtn) {
@@ -184,7 +184,7 @@
                         this.openEditModal();
                     };
                 }
-                
+
                 // Assign button
                 const assignBtn = actions.querySelector('[data-action="assign"]');
                 if (assignBtn) {
@@ -194,7 +194,7 @@
                     };
                 }
             };
-            
+
             this.ref.addEventListener("mouseenter", () => {
                 actions.classList.remove("opacity-0");
                 actions.classList.add("opacity-100");
@@ -214,11 +214,16 @@
 
             // Dragging behaviour
             let originalColumn = null;
+            let oldPrevId = null;
+            let oldNextId = null;
             this.ref.addEventListener("dragstart", () => {
                 this.board.IS_EDITING = true;
                 this.ref.classList.add("is-dragging");
                 this.ref.classList.toggle("!bg-gray-500");
                 originalColumn = this.ref.closest("div[data-role='column']");
+                // capture original neighbors to detect same-column movement
+                oldPrevId = this.ref.previousElementSibling?.dataset?.id || null;
+                oldNextId = this.ref.nextElementSibling?.dataset?.id || null;
             });
 
             this.ref.addEventListener("dragend", () => {
@@ -231,11 +236,19 @@
                 const currentColId = newColumn?.dataset?.id;
                 const originalColId = originalColumn?.dataset?.id;
 
+                // ensure DOM placement and compute neighbors after drop
                 if (originalColId === currentColId) {
                     const container = originalColumn.querySelector("section > div#card-container");
                     const before = this.ref.previousElementSibling;
                     if (before) container.insertBefore(this.ref, before.nextSibling);
                     else container.prepend(this.ref);
+                }
+
+                const bottomId = this.ref.nextElementSibling?.dataset?.id || null;
+                const topId = this.ref.previousElementSibling?.dataset?.id || null;
+
+                // If position didn't actually change within same column, skip request
+                if (originalColId === currentColId && oldPrevId === topId && oldNextId === bottomId) {
                     this.board.IS_EDITING = false;
                     this.ref.setAttribute('draggable', true);
                     return;
@@ -244,8 +257,8 @@
                 ServerRequest.post(`{{ url('team/'.$teamid.'/board/${board_id}/card/reorder') }}`, {
                     column_id: currentColId,
                     middle_id: this.ref.dataset.id,
-                    bottom_id: this.ref.nextElementSibling?.dataset?.id || null,
-                    top_id: this.ref.previousElementSibling?.dataset?.id || null,
+                    bottom_id: bottomId,
+                    top_id: topId,
                 }).then(() => {
                     this.board.IS_EDITING = false;
                     this.ref.setAttribute('draggable', true);
@@ -373,7 +386,7 @@
         }
 
         renderActionButtons() {
-            const isOwnerOrAdmin = @json(Auth::user()->can('manage-tasks'));
+            const isOwnerOrAdmin = @json(Auth::user() -> can('manage-tasks'));
             if (!isOwnerOrAdmin) return '';
             return `
                 @can('assign-tasks')
