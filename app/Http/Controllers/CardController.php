@@ -144,7 +144,6 @@ class CardController extends Controller
 
     public function updateCard(Request $request, $team_id, $board_id, $card_id)
     {
-        try {
             $request->validate([
                 'card_name' => 'sometimes|string|max:95',
                 'start_date' => 'nullable|date',
@@ -164,9 +163,6 @@ class CardController extends Controller
             $card->save();
             $this->cardLogic->cardAddEvent($card_id, $user_id, 'Updated card information.');
         return redirect()->back()->with("notif", ["Succss\nCard updated successfully"]);
-        } catch (\Exception $e) {
-            return redirect()->back()->with("notif", ["Error\n" . $e->getMessage()]);
-        }
     }
 
     public function markDone(Request $request, $team_id, $board_id, $card_id)
