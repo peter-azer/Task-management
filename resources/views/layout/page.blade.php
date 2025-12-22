@@ -36,7 +36,7 @@
                     <p class="text-lg font-normal"> Tasks Calendar </p>
                 </a>
 
-                @if (auth()->user()->can('manage-tasks'))
+                @if (auth()->user()->can('manage-user'))
                 <a data-role="menu-item" href="{{ url('tasks/delayed') }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ request()->is('tasks/delayed') ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
                     <x-fas-triangle-exclamation class="w-6 h-6
