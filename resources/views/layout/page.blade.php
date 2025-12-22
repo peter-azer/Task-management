@@ -36,6 +36,7 @@
                     <p class="text-lg font-normal"> Tasks Calendar </p>
                 </a>
 
+                @if (auth()->user()->can('manage-tasks'))
                 <a data-role="menu-item" href="{{ url('tasks/delayed') }}"
                     class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ request()->is('tasks/delayed') ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
                     <x-fas-triangle-exclamation class="w-6 h-6
@@ -44,6 +45,7 @@
                     <p class="text-lg font-normal"> Delayed Tasks </p>
                     <span id="delayed-badge" class="ml-auto inline-flex items-center justify-center text-xs font-semibold rounded-full bg-red-600 text-white px-2 py-0.5" style="min-width:1.25rem; display:none;">0</span>
                 </a>
+                @endif
 
                 @if (auth()->user()->can('view-user'))
                 <a data-role="menu-item" href="{{ route('users') }}"
