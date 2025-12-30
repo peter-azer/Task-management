@@ -45,6 +45,7 @@ class TeamApiLogic
             'patterns' => TeamLogic::PATTERN,
             'backgrounds' => \App\Logic\BoardLogic::PATTERN,
             'boards' => $this->teamLogic->getBoards($team->id),
+            'archived_boards' => $this->teamLogic->getArchivedBoards($team->id)
         ];
     }
 }
