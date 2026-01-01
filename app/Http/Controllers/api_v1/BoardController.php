@@ -97,6 +97,20 @@ class BoardController extends Controller
         return response()->json(['message' => 'deleted']);
     }
 
+    // POST /api/v1/teams/{team_id}/boards/{board_id}/do-unarchive
+    public function unarchiveBoard(Request $request, $team_id, $board_id)
+    {
+        if (!auth()->user()->can('edit-project')) return redirect()->back()->with('notif', ['Unauthorized']);
+        $board = Board::findOrFail(intval($board_id));
+        $board->archive = false;
+        $board->archived_at = null;
+        $board->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Board restored'
+        ]);
+    }
+
     // POST /api/v1/teams/{team_id}/boards/{board_id}/columns
     public function addColumn(Request $request, int $team_id, int $board_id)
     {

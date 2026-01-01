@@ -112,15 +112,15 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.teams.show');
         // Update team
         Route::put('/teams/{team_id}', [ApiV1TeamController::class, 'update'])
-            ->middleware(['userInTeam','permission:update-team'])
+            ->middleware(['userInTeam', 'permission:update-team'])
             ->name('api.v1.teams.update');
         // Delete team
         Route::delete('/teams/{team_id}', [ApiV1TeamController::class, 'destroy'])
-            ->middleware(['userInTeam','permission:delete-team'])
+            ->middleware(['userInTeam', 'permission:delete-team'])
             ->name('api.v1.teams.destroy');
         // Upload team image
         Route::post('/teams/{team_id}/image', [ApiV1TeamController::class, 'updateImage'])
-            ->middleware(['userInTeam','permission:update-team'])
+            ->middleware(['userInTeam', 'permission:update-team'])
             ->name('api.v1.teams.image');
         // Search teams (by name)
         Route::get('/teams/search', [ApiV1TeamController::class, 'search'])
@@ -131,11 +131,11 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.teams.leave');
         // Invite members
         Route::post('/teams/{team_id}/invites', [ApiV1TeamController::class, 'inviteMembers'])
-            ->middleware(['userInTeam','permission:send-invitation'])
+            ->middleware(['userInTeam', 'permission:send-invitation'])
             ->name('api.v1.teams.invites');
         // Delete members
         Route::delete('/teams/{team_id}/users', [ApiV1TeamController::class, 'deleteMembers'])
-            ->middleware(['userInTeam','permission:manage-members'])
+            ->middleware(['userInTeam', 'permission:manage-members'])
             ->name('api.v1.teams.members.delete');
         // Get invite details for current user
         Route::get('/teams/{team_id}/invite', [ApiV1TeamController::class, 'getInvite'])
@@ -161,7 +161,7 @@ Route::prefix('v1')->group(function () {
         */
         // Create board
         Route::post('/teams/{team_id}/boards', [ApiV1BoardController::class, 'store'])
-            ->middleware(['userInTeam','permission:create-project'])
+            ->middleware(['userInTeam', 'permission:create-project'])
             ->name('api.v1.boards.store');
         // Show board
         Route::get('/teams/{team_id}/boards/{board_id}', [ApiV1BoardController::class, 'show'])
@@ -173,35 +173,39 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.boards.data');
         // Update board
         Route::put('/teams/{team_id}/boards/{board_id}', [ApiV1BoardController::class, 'update'])
-            ->middleware(['boardAccess','permission:edit-project'])
+            ->middleware(['boardAccess', 'permission:edit-project'])
             ->name('api.v1.boards.update');
         // Delete board
         Route::delete('/teams/{team_id}/boards/{board_id}', [ApiV1BoardController::class, 'destroy'])
-            ->middleware(['boardAccess','permission:delete-project'])
+            ->middleware(['boardAccess', 'permission:delete-project'])
             ->name('api.v1.boards.destroy');
+        // Archive board
+        Route::post("teams/{team_id}/boards/{board_id}/do-unarchive", [ApiV1BoardController::class, "unarchiveBoard"])
+            ->middleware(['boardAccess', 'permission:edit-project'])
+            ->name("api.v1.restore.board");
         // Add column
         Route::post('/teams/{team_id}/boards/{board_id}/columns', [ApiV1BoardController::class, 'addColumn'])
             ->middleware('boardAccess')
             ->name('api.v1.columns.store');
         // Reorder columns
         Route::patch('/teams/{team_id}/boards/{board_id}/columns/reorder', [ApiV1BoardController::class, 'reorderCol'])
-            ->middleware(['boardAccess','permission:edit-task'])
+            ->middleware(['boardAccess', 'permission:edit-task'])
             ->name('api.v1.columns.reorder');
         // Update column
         Route::put('/teams/{team_id}/boards/{board_id}/columns/{column_id}', [ApiV1BoardController::class, 'updateCol'])
-            ->middleware(['boardAccess','permission:edit-task'])
+            ->middleware(['boardAccess', 'permission:edit-task'])
             ->name('api.v1.columns.update');
         // Delete column
         Route::delete('/teams/{team_id}/boards/{board_id}/columns/{column_id}', [ApiV1BoardController::class, 'deleteCol'])
-            ->middleware(['boardAccess','permission:delete-task'])
+            ->middleware(['boardAccess', 'permission:delete-task'])
             ->name('api.v1.columns.delete');
         // Add card to column
         Route::post('/teams/{team_id}/boards/{board_id}/columns/{column_id}/cards', [ApiV1BoardController::class, 'addCard'])
-            ->middleware(['boardAccess','permission:create-task'])
+            ->middleware(['boardAccess', 'permission:create-task'])
             ->name('api.v1.cards.store');
         // Reorder cards
         Route::patch('/teams/{team_id}/boards/{board_id}/cards/reorder', [ApiV1BoardController::class, 'reorderCard'])
-            ->middleware(['boardAccess','permission:edit-task'])
+            ->middleware(['boardAccess', 'permission:edit-task'])
             ->name('api.v1.cards.reorder');
 
         /*
@@ -211,42 +215,42 @@ Route::prefix('v1')->group(function () {
         */
         // Show card
         Route::get('/teams/{team_id}/boards/{board_id}/cards/{card_id}', [ApiV1CardController::class, 'show'])
-            ->middleware(['boardAccess','cardExist'])
+            ->middleware(['boardAccess', 'cardExist'])
             ->name('api.v1.cards.show');
         // Assign user to card
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/assign', [ApiV1CardController::class, 'assignTask'])
-            ->middleware(['boardAccess','cardExist','permission:assign-tasks'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:assign-tasks'])
             ->name('api.v1.cards.assign');
         // Unassign user from card
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/unassign', [ApiV1CardController::class, 'unassignTask'])
-            ->middleware(['boardAccess','cardExist','permission:assign-tasks'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:assign-tasks'])
             ->name('api.v1.cards.unassign');
         // Leave card
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/leave', [ApiV1CardController::class, 'leave'])
-            ->middleware(['boardAccess','cardExist'])
+            ->middleware(['boardAccess', 'cardExist'])
             ->name('api.v1.cards.leave');
         // Delete card
         Route::delete('/teams/{team_id}/boards/{board_id}/cards/{card_id}', [ApiV1CardController::class, 'destroy'])
-            ->middleware(['boardAccess','cardExist','permission:delete-task'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:delete-task'])
             ->name('api.v1.cards.destroy');
         // Update card
         Route::put('/teams/{team_id}/boards/{board_id}/cards/{card_id}', [ApiV1CardController::class, 'update'])
-            ->middleware(['boardAccess','cardExist','permission:edit-task'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:edit-task'])
             ->name('api.v1.cards.update');
         // Mark done / not done
         Route::patch('/teams/{team_id}/boards/{board_id}/cards/{card_id}/done', [ApiV1CardController::class, 'markDone'])
-            ->middleware(['boardAccess','cardExist'])
+            ->middleware(['boardAccess', 'cardExist'])
             ->name('api.v1.cards.done');
         // Add comment
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/comment', [ApiV1CardController::class, 'addComment'])
-            ->middleware(['boardAccess','cardExist'])
+            ->middleware(['boardAccess', 'cardExist'])
             ->name('api.v1.cards.comment');
         // Archive / unarchive
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/archive', [ApiV1CardController::class, 'archive'])
-            ->middleware(['boardAccess','cardExist','permission:archive-task'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:archive-task'])
             ->name('api.v1.cards.archive');
         Route::post('/teams/{team_id}/boards/{board_id}/cards/{card_id}/unarchive', [ApiV1CardController::class, 'unarchive'])
-            ->middleware(['boardAccess','cardExist','permission:archive-task'])
+            ->middleware(['boardAccess', 'cardExist', 'permission:archive-task'])
             ->name('api.v1.cards.unarchive');
     });
 });
