@@ -28,8 +28,8 @@ class TeamController extends Controller
         try {
 
             $request->validate([
-                "team_name" => "required|min:5|max:20",
-                "team_description" => "required|min:5|max:90",
+                "team_name" => "required",
+                "team_description" => "required|max:90",
                 "team_pattern" => 'sometimes',
             ]);
 
