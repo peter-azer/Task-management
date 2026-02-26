@@ -260,7 +260,7 @@ class TeamController extends Controller
             UserTeam::create([
                 "user_id" => $user->id,
                 "team_id" => $team_id,
-                "status" => "Pending"
+                "status" => "Member"
             ]);
 
             $team = Team::findOrFail($team_id);
