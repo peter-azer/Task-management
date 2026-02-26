@@ -267,7 +267,8 @@ class TeamController extends Controller
             $user->notify(new TeamInvitation($team));
         }
 
-        return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
+        // return redirect()->back()->with('notif', ["Success\nInvite sent, please wait."]);
+        return redirect()->back()->with('notif', ["Success\nMembers added to team."]);
     }
 
     public function deleteTeam(Request $request, $team_id)
