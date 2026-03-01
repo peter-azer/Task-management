@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "owenvoke/blade-fontawesome": "^2.2",
+        "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-permission": "^6.20"
     },
     "require-dev": {
