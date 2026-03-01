@@ -56,6 +56,16 @@
                     <p class="text-lg font-normal"> Users </p>
                 </a>
                 @endif
+
+                @if (auth()->user()->hasRole('super-admin'))
+                <a data-role="menu-item" href="{{ route('activity-log.index') }}"
+                    class="flex items-center justify-start w-full gap-3 px-6 py-2 text-sm text-white cursor-pointer select-none {{ Route::currentRouteName() == 'activity-log.index' ? 'bg-[#2c8bc6] hover:bg-[#0f5490] rounded-lg' : 'hover:bg-[#0f5490] hover:text-white' }} hover:rounded-md duration-200">
+                    <x-fas-clock-rotate-left class="w-6 h-6
+                    {{ Route::currentRouteName() == 'activity-log.index' ? 'text-white' : 'text-[#2c8bc6]' }}
+                    " />
+                    <p class="text-lg font-normal"> Activity Log </p>
+                </a>
+                @endif
             </div>
 
             @hasSection('app-side')

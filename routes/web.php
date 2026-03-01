@@ -6,6 +6,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TaskOverviewController;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function () {
@@ -38,6 +39,9 @@ Route::middleware(["auth", "auth.session", "permission:update-user"])->put("user
 Route::middleware(["auth", "auth.session"])->get("user/show/{id}", [UserController::class, "show"])->name("user.show");
 Route::middleware(["auth", "auth.session", "permission:create-user"])->post("user/store", [UserController::class, "store"])->name("user.store");
 Route::middleware(["auth", "auth.session"])->get("user/calendar", [UserController::class, "showCalendar"])->name("user.calendar");
+
+// Activity Log - only accessible by super-admin
+Route::middleware(["auth", "auth.session", "role:super-admin"])->get("activity-log", [ActivityLogController::class, "index"])->name("activity-log.index");
 
 // Delayed Tasks overview
 Route::middleware(["auth", "auth.session"])->get("tasks/delayed", [TaskOverviewController::class, "delayedIndex"])->name("tasks.delayed");
