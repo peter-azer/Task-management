@@ -18,3 +18,6 @@ yarn-error.log
 /.idea
 /.vscode
 /resources/views/temp.*
+error_log
+*/__MACOSX/
+*.log
