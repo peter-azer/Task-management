@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Column extends Model
+class Column extends BaseModel
 {
     use HasFactory;
 
@@ -26,7 +26,7 @@ class Column extends Model
      *
      * @var array<int, string>
      */
-    protected $hidden = [   
+    protected $hidden = [
         'board_id',
         'previous_id',
         'next_id',
